@@ -1,6 +1,7 @@
 Django==5.0.6
 setuptools==70.0.0
 psycopg2-binary==2.9.10
+python-barcode==0.15.1
 python-dotenv==1.0.0
 dj-database-url==2.1.0
 Cloudinary==1.36.0
