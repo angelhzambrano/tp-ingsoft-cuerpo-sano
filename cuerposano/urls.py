@@ -13,5 +13,6 @@ urlpatterns = [
     path('entrenadores/', include('entrenadores.urls', namespace='entrenadores')),
     path('cobros/', include('cobros.urls', namespace='cobros')),
     path('reportes/', include('reportes.urls', namespace='reportes')),
+    path('historial/', include('historial.urls', namespace='historial')),
     path('healthz/', views.healthz),
 ]

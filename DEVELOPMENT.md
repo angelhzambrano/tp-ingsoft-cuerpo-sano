@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 9/13 completado)
+**Status:** En construcción (Paso 10/13 completado)
 
 ---
 
@@ -740,6 +740,90 @@ if form.is_valid():
 
 ---
 
+## Paso 10: Healthz + Auditlog
+
+**Objetivo:** Health check para Render + Registro de auditoría para cambios en Miembro y Cobro
+
+### Qué se hizo
+
+1. **Healthz endpoint (ya existía, mejorado)**
+   ```python
+   GET /healthz/
+   → {'status': 'ok', 'db': 'connected'}
+   → Valida conexión a DB
+   → Status 503 si falla
+   ```
+   Usado por Render para comprobar salud del servicio
+
+2. **App historial**
+   - Nuevo modelo `AuditLog`: modelo, id_objeto, accion (CREATE/UPDATE/DELETE), usuario, timestamp, cambios, descripcion
+   - Índices en: modelo+id_objeto, timestamp, usuario
+
+3. **Signals registrados**
+   - `post_save` en Miembro → crea AuditLog con accion=CREATE o UPDATE
+   - `post_delete` en Miembro → crea AuditLog con accion=DELETE
+   - `post_save` en Cobro → crea AuditLog con accion=CREATE o UPDATE
+   - `post_delete` en Cobro → crea AuditLog con accion=DELETE
+   - Registrados en `apps.py` con `dispatch_uid` para evitar duplicados
+
+4. **Vistas**
+   - `lista_auditlog()` — Tabla filtrable por modelo y acción
+   - `auditlog_miembro(id)` — Historial completo de cambios en Miembro específico
+   - `auditlog_cobro(id)` — Historial completo de cambios en Cobro específico
+
+5. **URLs**
+   ```python
+   /historial/auditlog/                    # Tabla general de eventos
+   /historial/auditlog/miembro/<id>/       # Historial de Miembro
+   /historial/auditlog/cobro/<id>/         # Historial de Cobro
+   ```
+
+6. **Templates**
+   - `auditlog.html` — Tabla general con filtros (modelo, acción) + links a detalles
+   - `auditlog_detalle.html` — Timeline de cambios con usuario y timestamp
+
+7. **Admin**
+   - AuditLogAdmin: list_display (timestamp, usuario, modelo, id, accion, descripcion)
+   - read-only: no permitir agregar, editar, o eliminar logs (immutable)
+   - date_hierarchy por timestamp para navegación rápida
+
+### Cómo se hizo
+
+**Signals en apps.py:**
+```python
+def ready(self):
+    post_save.connect(registrar_cambios_miembro, sender=Miembro, dispatch_uid='audit_miembro_save')
+    post_delete.connect(registrar_eliminacion_miembro, sender=Miembro, dispatch_uid='audit_miembro_delete')
+```
+
+**Creación de AuditLog:**
+```python
+AuditLog.objects.create(
+    modelo='Miembro',
+    id_objeto=instance.id,
+    accion='CREATE',
+    usuario=request.user,
+    descripcion=f'Nuevo miembro: {instance.nombre}'
+)
+```
+
+**Admin immutable:**
+```python
+def has_add_permission(self, request):
+    return False
+def has_delete_permission(self, request, obj=None):
+    return False
+```
+
+### Nota de implementación
+
+- Sin captura de "cambios específicos" (qué campo cambió de qué a qué) en v1
+- Solo registra acción y descripción general
+- Extensible para JSONField con diff en futuras versiones
+- Apunta a objetos que pueden haber sido eliminados (FK a User solo, no a Miembro/Cobro)
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -752,9 +836,9 @@ if form.is_valid():
 - Paso 7: Actividades (CRUD actividades + horarios + inscripciones con validación de capacidad)
 - Paso 8: Entrenadores (CRUD + asistencia de entrenador + reporte imprimible)
 - Paso 9: Reportes (3 vistas: asistencias, cobros, membresías vencidas con filtros)
+- Paso 10: Healthz (health check para Render) + Auditlog (historial de cambios en Miembro y Cobro)
 
 ### ⏳ Próximos pasos
-- Paso 10: Healthz + auditlog (Miembro y Cobro)
 - Paso 11: Tests (pytest-django + factory-boy)
 - Paso 12: Deploy (Render)
 - Paso 13: RF-11 biométrico (stub con WebSocket)

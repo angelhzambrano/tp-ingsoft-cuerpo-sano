@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'django_q',
-    'auditlog',
     'miembros',
     'membresias',
     'asistencia',
@@ -32,6 +31,7 @@ INSTALLED_APPS = [
     'entrenadores',
     'cobros',
     'reportes',
+    'historial',
 ]
 
 MIDDLEWARE = [
