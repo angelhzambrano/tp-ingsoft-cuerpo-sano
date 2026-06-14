@@ -49,6 +49,20 @@ if result.stderr:
     print(f"[USER] Errors: {result.stderr}", file=sys.stderr)
 
 print("\n" + "=" * 60, file=sys.stderr)
+print("🌱 CREATING TEST DATA", file=sys.stderr)
+print("=" * 60, file=sys.stderr)
+
+result = subprocess.run(
+    [sys.executable, "manage.py", "seed_test_data"],
+    capture_output=True,
+    text=True
+)
+print(f"[SEED] Return code: {result.returncode}", file=sys.stderr)
+print(f"[SEED] Output: {result.stdout}", file=sys.stderr)
+if result.stderr:
+    print(f"[SEED] Warnings: {result.stderr}", file=sys.stderr)
+
+print("\n" + "=" * 60, file=sys.stderr)
 print("📦 COLLECTING STATIC FILES", file=sys.stderr)
 print("=" * 60, file=sys.stderr)
 
