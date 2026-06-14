@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Registro Manual de Asistencia{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">✍️ Registro Manual de Asistencia</h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Selecciona Miembro *</span>
+                    </label>
+                    <select name="miembro_id" class="select select-bordered w-full" required>
+                        <option value="">-- Selecciona un miembro --</option>
+                        {% for miembro in miembros %}
+                            <option value="{{ miembro.pk }}">
+                                {{ miembro }} ({{ miembro.dni }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Registrar Asistencia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-6 flex justify-center gap-2">
+        <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost">Volver a Scanner</a>
+        <a href="{% url 'asistencia:listado' %}" class="btn btn-ghost">Ver Historial</a>
+    </div>
+</div>
+{% endblock %}

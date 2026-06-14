@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de Asistencias{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold">📊 Historial de Asistencias</h1>
+    </div>
+
+    <div class="card bg-base-100 shadow-md mb-6">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Filtros</h2>
+            <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Desde</span>
+                    </label>
+                    <input
+                        type="date"
+                        name="fecha_inicio"
+                        class="input input-bordered w-full"
+                        value="{{ fecha_inicio|date:'Y-m-d' }}"
+                    />
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Hasta</span>
+                    </label>
+                    <input
+                        type="date"
+                        name="fecha_fin"
+                        class="input input-bordered w-full"
+                        value="{{ fecha_fin|date:'Y-m-d' }}"
+                    />
+                </div>
+
+                <div class="form-control flex justify-end pt-6">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        {% if asistencias %}
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>Miembro</th>
+                        <th>DNI</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Método</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asistencia in asistencias %}
+                        <tr>
+                            <td class="font-semibold">{{ asistencia.miembro }}</td>
+                            <td>{{ asistencia.miembro.dni }}</td>
+                            <td>{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                            <td class="font-mono">{{ asistencia.hora|time:"H:i:s" }}</td>
+                            <td>
+                                {% if asistencia.metodo == "BARCODE" %}
+                                    <span class="badge badge-info">🔍 Barcode</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">✍️ Manual</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <p>No hay asistencias registradas en este período.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 text-sm text-gray-600 flex justify-between items-center">
+        <div>Total: <strong>{{ total }}</strong> asistencia(s)</div>
+        <div class="space-x-2">
+            <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm">Volver a Registro</a>
+            <a href="{% url 'asistencia:manual' %}" class="btn btn-ghost btn-sm">Registro Manual</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

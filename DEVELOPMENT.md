@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 4/13 completado)
+**Status:** En construcción (Paso 5/13 completado)
 
 ---
 
@@ -338,6 +338,108 @@ TipoMembresia.objects.create(nombre='Anual', precio=500, duracion_dias=365)
 
 ---
 
+## Paso 5: App Asistencia (Scanner de Código de Barras + Listado)
+
+**Objetivo:** Registro rápido de asistencias por código de barras con validación de membresía
+
+### Qué se hizo
+
+1. **Modelo**
+   - `Asistencia`: miembro (FK), fecha (auto_now_add), hora (auto_now_add), metodo (BARCODE/MANUAL)
+   - Ya existía con campos correctos
+
+2. **Vistas**
+   - `registro_asistencia()` — GET: renderiza página con scanner + input manual
+   - `registrar_por_barcode()` — POST AJAX JSON, valida carnet + membresía ACTIVA, crea Asistencia, retorna {success, message, miembro}
+   - `listado_asistencia()` — GET con filtro por fecha (desde/hasta), renderiza tabla con todas las asistencias
+   - `registro_manual()` — GET/POST, select de miembro activo, crea Asistencia con metodo=MANUAL
+
+3. **Endpoints**
+   ```python
+   /asistencia/                    # Página scanner
+   /asistencia/api/barcode/        # AJAX POST para procesar barcode
+   /asistencia/listado/            # Listado con filtros
+   /asistencia/manual/             # Registro manual
+   ```
+
+4. **Frontend**
+   - `registro.html`:
+     - CDN html5-qrcode (barcode.js equivalente)
+     - Scanner en vivo con camera
+     - Input invisible para capturar enteradas
+     - Buffer de últimos escaneos con toast success/error
+     - AJAX POST a `/asistencia/api/barcode/`
+     - Keypress Enter en input manual también dispara el escaneo
+   
+   - `lista.html`:
+     - Filtro por fecha (desde/hasta)
+     - Tabla: miembro, DNI, fecha, hora, método (badge BARCODE/MANUAL)
+     - Total de registros
+   
+   - `registro_manual.html`:
+     - Select de miembros activos
+     - POST crea Asistencia con metodo=MANUAL
+
+5. **Validaciones en API**
+   - Código de barras no vacío
+   - Carnet existe (get_object_or_404)
+   - Miembro está activo
+   - Miembro tiene membresía ACTIVA
+   - Transacción atómica en creación
+
+6. **Admin**
+   - AsistenciaAdmin: list_display (miembro, fecha, hora, metodo)
+   - Filtros por metodo y fecha
+   - Búsqueda por nombre/apellido/DNI de miembro
+   - Readonly: fecha y hora
+
+### Cómo se hizo
+
+**Scanner HTML5:**
+```javascript
+const html5QrcodeScanner = new Html5QrcodeScanner(
+    "scanner",
+    { fps: 10, qrbox: { width: 250, height: 250 } },
+    false
+);
+
+html5QrcodeScanner.render(onScanSuccess, onScanError);
+```
+
+**Validación de membresía:**
+```python
+membresia = Membresia.objects.filter(
+    miembro=miembro,
+    estado='ACTIVA'
+).first()
+
+if not membresia:
+    return JsonResponse({'success': False, 'error': '...'})
+```
+
+**AJAX POST:**
+```javascript
+fetch('/asistencia/api/barcode/', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: JSON.stringify({ numero_carnet: codigo })
+})
+.then(response => response.json())
+.then(data => {
+    if (data.success) {
+        // Toast success
+        lastRegistry.innerHTML = `<p>${data.miembro}</p>`;
+    } else {
+        // Toast error
+    }
+});
+```
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -345,9 +447,9 @@ TipoMembresia.objects.create(nombre='Anual', precio=500, duracion_dias=365)
 - Paso 2: Auth (login/logout/grupos/redirects)
 - Paso 3: Miembros (CRUD + carnet + barcode)
 - Paso 4: Membresias (CRUD + tipos + auto-update de estado con django-q2)
+- Paso 5: Asistencia (Scanner HTML5 + registro por barcode + listado + validación de membresía)
 
 ### ⏳ Próximos pasos
-- Paso 5: App asistencia (registro por barcode + listado)
 - Paso 6: App cobros (descuento automático + comprobante print)
 - Paso 7: App actividades (CRUD + horarios + inscripciones)
 - Paso 8: App entrenadores (CRUD + asistencia de entrenador)
@@ -441,15 +543,6 @@ cuerposano/
 ---
 
 ## Notas para próximos pasos
-
-### App Asistencia
-- Modelo Asistencia: miembro (FK), fecha (auto_now_add), hora (auto_now_add), metodo (BARCODE/MANUAL)
-- Página `/asistencia/`: input invisible + barcode.js
-  - Acumula keystrokes en buffer
-  - En Enter: POST JSON {numero_carnet: "CS-00001"}
-  - Backend valida carnet existe + membresia activa
-  - Toast con resultado (éxito o error)
-- Listado con filtros por fecha
 
 ### App Cobros
 - Descuento según tipo_miembro:
