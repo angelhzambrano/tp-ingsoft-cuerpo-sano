@@ -2,9 +2,20 @@
 
 {% block title %}Reporte de Asistencias{% endblock %}
 
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold mb-6">Reporte de Asistencias</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Reporte de Asistencias</h1>
+        {% if stats.total > 0 %}
+        <a href="?{{ request.GET.urlencode }}&export=excel" class="btn btn-success btn-sm">
+            📊 Descargar Excel
+        </a>
+        {% endif %}
+    </div>
 
     <div class="card bg-base-100 shadow-md mb-6">
         <div class="card-body">
@@ -46,7 +57,8 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    {% if stats.total > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="stat bg-base-100 shadow-md">
             <div class="stat-title">Total Asistencias</div>
             <div class="stat-value text-3xl">{{ stats.total }}</div>
@@ -56,13 +68,55 @@
             <div class="stat-value text-3xl">{{ stats.miembros_unicos }}</div>
         </div>
         <div class="stat bg-base-100 shadow-md">
-            <div class="stat-title">Métodos</div>
-            <div class="stat-value text-lg">
-                <div class="text-sm">🔴 {{ stats.por_metodo.BARCODE }}</div>
-                <div class="text-sm">✏️ {{ stats.por_metodo.MANUAL }}</div>
+            <div class="stat-title">Promedio Diario</div>
+            <div class="stat-value text-3xl">{{ stats.promedio_diario }}</div>
+        </div>
+        <div class="stat bg-base-100 shadow-md">
+            <div class="stat-title">Días c/ Registro</div>
+            <div class="stat-value text-3xl">{{ stats.dias_con_registro }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body">
+                <h3 class="card-title text-lg">Asistencias por Método</h3>
+                <canvas id="metodosChart"></canvas>
+                <div class="mt-4 text-sm">
+                    <div class="flex justify-between">
+                        <span>🔴 Código:</span>
+                        <span class="font-bold">{{ stats.por_metodo.BARCODE }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>✏️ Manual:</span>
+                        <span class="font-bold">{{ stats.por_metodo.MANUAL }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-md">
+            <div class="card-body">
+                <h3 class="card-title text-lg">Top 5 Miembros</h3>
+                <div class="space-y-2">
+                    {% for miembro, count in stats.top_miembros %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">{{ miembro }}</span>
+                        <span class="badge badge-primary">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="card bg-base-100 shadow-md mb-6">
+        <div class="card-body">
+            <h3 class="card-title text-lg mb-4">Asistencias por Día</h3>
+            <canvas id="diasChart" style="max-height: 300px;"></canvas>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="card bg-base-100 shadow-md">
         <div class="card-body">
@@ -70,28 +124,30 @@
 
             {% if asistencias %}
                 <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full">
+                    <table class="table table-zebra w-full text-sm">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Hora</th>
                                 <th>Miembro</th>
                                 <th>DNI</th>
+                                <th>Tipo</th>
                                 <th>Método</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for asistencia in asistencias %}
+                            {% for asistencia in asistencias|slice:":50" %}
                                 <tr>
                                     <td>{{ asistencia.fecha|date:"d/m/Y" }}</td>
                                     <td>{{ asistencia.hora|time:"H:i" }}</td>
                                     <td class="font-semibold">{{ asistencia.miembro }}</td>
                                     <td>{{ asistencia.miembro.dni }}</td>
+                                    <td><span class="badge badge-sm">{{ asistencia.miembro.get_tipo_miembro_display }}</span></td>
                                     <td>
                                         {% if asistencia.metodo == 'BARCODE' %}
-                                            <span class="badge badge-info">Código</span>
+                                            <span class="badge badge-info badge-sm">Código</span>
                                         {% else %}
-                                            <span class="badge">Manual</span>
+                                            <span class="badge badge-sm">Manual</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -99,6 +155,11 @@
                         </tbody>
                     </table>
                 </div>
+                {% if asistencias|length > 50 %}
+                <div class="alert alert-info mt-4 text-sm">
+                    Mostrando últimas 50 asistencias de {{ asistencias|length }} registros.
+                </div>
+                {% endif %}
             {% else %}
                 <div class="alert alert-info">
                     <p>No hay asistencias para los filtros seleccionados.</p>
@@ -107,4 +168,62 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Gráfico de métodos
+    const metodosCtx = document.getElementById('metodosChart');
+    if (metodosCtx) {
+        new Chart(metodosCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Código ({{ stats.por_metodo.BARCODE }})', 'Manual ({{ stats.por_metodo.MANUAL }})'],
+                datasets: [{
+                    data: [{{ stats.por_metodo.BARCODE }}, {{ stats.por_metodo.MANUAL }}],
+                    backgroundColor: ['#3b82f6', '#8b5cf6'],
+                    borderColor: ['#1e40af', '#6d28d9'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    // Gráfico de asistencias por día
+    const diasCtx = document.getElementById('diasChart');
+    if (diasCtx) {
+        const data = {{ stats.asistencias_por_dia_json|safe }};
+        new Chart(diasCtx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Asistencias',
+                    data: data.data,
+                    backgroundColor: '#4f46e5',
+                    borderColor: '#312e81',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}
