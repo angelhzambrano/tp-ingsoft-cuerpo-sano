@@ -1,23 +1,109 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
+from datetime import date
+from .models import Entrenador, AsistenciaEntrenador
+from .forms import EntrenadorForm, AsistenciaEntrenadorForm
+from actividades.models import HorarioClase
+
 
 @login_required
 def lista_entrenadores(request):
-    return HttpResponse("Lista de entrenadores")
+    entrenadores = Entrenador.objects.all().order_by('-activo', 'apellido')
+    return render(request, 'entrenadores/lista.html', {'entrenadores': entrenadores})
+
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def crear_entrenador(request):
-    return HttpResponse("Crear entrenador")
+    if request.method == 'POST':
+        form = EntrenadorForm(request.POST)
+        if form.is_valid():
+            entrenador = form.save()
+            return redirect('entrenadores:detalle', pk=entrenador.pk)
+    else:
+        form = EntrenadorForm()
+    return render(request, 'entrenadores/form.html', {'form': form, 'title': 'Crear Entrenador'})
+
 
 @login_required
+def detalle_entrenador(request, pk):
+    entrenador = get_object_or_404(Entrenador, pk=pk)
+    asistencias = entrenador.asistencias.all().order_by('-fecha')
+    return render(request, 'entrenadores/detalle.html', {
+        'entrenador': entrenador,
+        'asistencias': asistencias
+    })
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
 def editar_entrenador(request, pk):
-    return HttpResponse(f"Editar entrenador {pk}")
+    entrenador = get_object_or_404(Entrenador, pk=pk)
+    if request.method == 'POST':
+        form = EntrenadorForm(request.POST, instance=entrenador)
+        if form.is_valid():
+            form.save()
+            return redirect('entrenadores:detalle', pk=entrenador.pk)
+    else:
+        form = EntrenadorForm(instance=entrenador)
+    return render(request, 'entrenadores/form.html', {
+        'form': form,
+        'title': 'Editar Entrenador',
+        'entrenador': entrenador
+    })
+
 
 @login_required
+@require_http_methods(["GET"])
 def print_entrenador(request, pk):
-    return HttpResponse(f"Print entrenador {pk}")
+    entrenador = get_object_or_404(Entrenador, pk=pk)
+    asistencias = entrenador.asistencias.all().order_by('-fecha')
+    stats = {
+        'total': asistencias.count(),
+        'presentes': asistencias.filter(tipo='PRESENTE').count(),
+        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
+        'justificadas': asistencias.filter(justificada=True).count(),
+    }
+    return render(request, 'entrenadores/print.html', {
+        'entrenador': entrenador,
+        'asistencias': asistencias,
+        'stats': stats
+    })
+
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def registro_asistencia_entrenador(request):
-    return HttpResponse("Registro de asistencia de entrenador")
+    if request.method == 'POST':
+        form = AsistenciaEntrenadorForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                form.save()
+            return redirect('entrenadores:lista')
+    else:
+        form = AsistenciaEntrenadorForm()
+    return render(request, 'entrenadores/form_asistencia.html', {
+        'form': form,
+        'title': 'Registrar Asistencia de Entrenador'
+    })
+
+
+@login_required
+def historial_asistencias_entrenador(request, pk):
+    entrenador = get_object_or_404(Entrenador, pk=pk)
+    asistencias = entrenador.asistencias.all().order_by('-fecha')
+
+    stats = {
+        'total': asistencias.count(),
+        'presentes': asistencias.filter(tipo='PRESENTE').count(),
+        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
+        'justificadas': asistencias.filter(justificada=True).count(),
+    }
+
+    return render(request, 'entrenadores/historial_asistencias.html', {
+        'entrenador': entrenador,
+        'asistencias': asistencias,
+        'stats': stats
+    })

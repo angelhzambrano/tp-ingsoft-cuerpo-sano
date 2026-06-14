@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">{{ title }}</h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Entrenador *</span>
+                    </label>
+                    {{ form.entrenador }}
+                    {% if form.entrenador.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.entrenador.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Clase/Horario *</span>
+                    </label>
+                    {{ form.horario }}
+                    {% if form.horario.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.horario.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Fecha *</span>
+                    </label>
+                    {{ form.fecha }}
+                    {% if form.fecha.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.fecha.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Estado *</span>
+                    </label>
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.tipo.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        {{ form.justificada }}
+                        <span class="label-text ml-2">Justificada</span>
+                    </label>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Observaciones</span>
+                    </label>
+                    {{ form.observaciones }}
+                    {% if form.observaciones.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.observaciones.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'entrenadores:lista' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

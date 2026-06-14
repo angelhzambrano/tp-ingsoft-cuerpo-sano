@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Entrenadores{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Entrenadores</h1>
+        <a href="{% url 'entrenadores:crear' %}" class="btn btn-primary">+ Nuevo Entrenador</a>
+    </div>
+
+    <div class="overflow-x-auto">
+        {% if entrenadores %}
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Especialidad</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrenador in entrenadores %}
+                        <tr>
+                            <td class="font-semibold">{{ entrenador.nombre }} {{ entrenador.apellido }}</td>
+                            <td>{{ entrenador.especialidad }}</td>
+                            <td>{{ entrenador.email }}</td>
+                            <td>{{ entrenador.telefono }}</td>
+                            <td>
+                                {% if entrenador.activo %}
+                                    <span class="badge badge-success">Activo</span>
+                                {% else %}
+                                    <span class="badge badge-error">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td class="space-x-2">
+                                <a href="{% url 'entrenadores:detalle' entrenador.pk %}" class="btn btn-sm btn-ghost">Ver</a>
+                                <a href="{% url 'entrenadores:editar' entrenador.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                                <a href="{% url 'entrenadores:historial_asistencias' entrenador.pk %}" class="btn btn-sm btn-ghost">Asistencias</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <p>No hay entrenadores registrados.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

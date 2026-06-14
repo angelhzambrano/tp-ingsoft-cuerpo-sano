@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte - {{ entrenador }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-8 bg-white print:bg-white">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold">Reporte de Asistencias</h1>
+        <p class="text-gray-600 mt-2">{{ entrenador.nombre }} {{ entrenador.apellido }}</p>
+        <p class="text-gray-600">{{ entrenador.especialidad }}</p>
+        <p class="text-sm text-gray-500 mt-2">Generado: {% now "d/m/Y H:i" %}</p>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4 mb-8">
+        <div class="border-2 border-gray-200 p-4 text-center">
+            <p class="text-gray-600 text-sm">Total Asistencias</p>
+            <p class="text-2xl font-bold">{{ stats.total }}</p>
+        </div>
+        <div class="border-2 border-green-200 p-4 text-center">
+            <p class="text-gray-600 text-sm">Presentes</p>
+            <p class="text-2xl font-bold text-green-600">{{ stats.presentes }}</p>
+        </div>
+        <div class="border-2 border-red-200 p-4 text-center">
+            <p class="text-gray-600 text-sm">Ausentes</p>
+            <p class="text-2xl font-bold text-red-600">{{ stats.ausentes }}</p>
+        </div>
+        <div class="border-2 border-blue-200 p-4 text-center">
+            <p class="text-gray-600 text-sm">Justificadas</p>
+            <p class="text-2xl font-bold text-blue-600">{{ stats.justificadas }}</p>
+        </div>
+    </div>
+
+    {% if asistencias %}
+        <div class="page-break mb-8">
+            <h2 class="text-2xl font-bold mb-4 border-b-2 pb-2">Detalle de Asistencias</h2>
+            <table class="w-full border-collapse text-sm">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border p-2 text-left">Fecha</th>
+                        <th class="border p-2 text-left">Actividad</th>
+                        <th class="border p-2 text-left">Horario</th>
+                        <th class="border p-2 text-center">Estado</th>
+                        <th class="border p-2 text-center">Justificada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asistencia in asistencias %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="border p-2">{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                            <td class="border p-2">{{ asistencia.horario.actividad.nombre }}</td>
+                            <td class="border p-2 text-sm">
+                                {{ asistencia.horario.get_dia_semana_display }}
+                                {{ asistencia.horario.hora_inicio|time:"H:i" }}-{{ asistencia.horario.hora_fin|time:"H:i" }}
+                            </td>
+                            <td class="border p-2 text-center">
+                                {% if asistencia.tipo == 'PRESENTE' %}
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold">PRESENTE</span>
+                                {% else %}
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-semibold">AUSENTE</span>
+                                {% endif %}
+                            </td>
+                            <td class="border p-2 text-center">
+                                {% if asistencia.justificada %}
+                                    <span class="text-lg">✓</span>
+                                {% else %}
+                                    <span class="text-gray-400">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="border-l-4 border-blue-400 bg-blue-50 p-4 mb-8">
+            <p>Sin asistencias registradas para este entrenador.</p>
+        </div>
+    {% endif %}
+
+    <div class="mt-12 pt-8 border-t-2">
+        <div class="grid grid-cols-3 gap-8">
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-8">Firma Entrenador</p>
+                <div class="border-t-2 border-gray-400 h-12"></div>
+            </div>
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-8">Firma Administrador</p>
+                <div class="border-t-2 border-gray-400 h-12"></div>
+            </div>
+            <div class="text-center">
+                <p class="text-sm text-gray-600 mb-8">Fecha</p>
+                <div class="border-t-2 border-gray-400 h-12"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        body { background: white; }
+        .page-break { page-break-after: auto; }
+    }
+</style>
+{% endblock %}

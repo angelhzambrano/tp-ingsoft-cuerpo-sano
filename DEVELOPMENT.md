@@ -604,6 +604,77 @@ def save(self, *args, **kwargs):
 
 ---
 
+## Paso 8: App Entrenadores (CRUD + Asistencia de Entrenador)
+
+**Objetivo:** Gestión de entrenadores con registro de asistencia a clases
+
+### Qué se hizo
+
+1. **Modelos** (ya existían)
+   - `Entrenador`: nombre, apellido, especialidad, telefono, email, activo
+   - `AsistenciaEntrenador`: entrenador (FK), horario (FK), fecha, tipo (PRESENTE/AUSENTE), justificada, observaciones
+   - unique_together (entrenador, horario, fecha) previene duplicados
+
+2. **Formularios (`forms.py`)**
+   - `EntrenadorForm`: nombre, apellido, especialidad, telefono, email, activo
+   - `AsistenciaEntrenadorForm`: entrenador, horario, fecha, tipo, justificada, observaciones
+
+3. **Vistas CRUD**
+   - `lista_entrenadores()` — Tabla de entrenadores con estado activo/inactivo
+   - `crear_entrenador()` — Formulario crear entrenador
+   - `detalle_entrenador()` — Card con info + últimas asistencias
+   - `editar_entrenador()` — Edit form
+   - `print_entrenador()` — Reporte imprimible con estadísticas
+   - `registro_asistencia_entrenador()` — Form para registrar asistencia
+   - `historial_asistencias_entrenador()` — Tabla con todas las asistencias + estadísticas
+
+4. **URLs**
+   ```python
+   /entrenadores/                                  # Lista entrenadores
+   /entrenadores/nuevo/                            # Crear entrenador
+   /entrenadores/<id>/                             # Detalle entrenador
+   /entrenadores/<id>/editar/                      # Editar entrenador
+   /entrenadores/<id>/print/                       # Reporte imprimible
+   /entrenadores/<id>/asistencias/                 # Historial asistencias
+   /entrenadores/asistencia/registrar/             # Registrar asistencia
+   ```
+
+5. **Templates**
+   - `lista.html` — Tabla con nombre, especialidad, email, estado, acciones
+   - `form.html` — Formulario crear/editar entrenador
+   - `detalle.html` — Card info personal + estadísticas + últimas asistencias
+   - `print.html` — Reporte imprimible con tabla de asistencias y campos de firma
+   - `form_asistencia.html` — Formulario registrar asistencia (entrenador, clase, fecha, estado)
+   - `historial_asistencias.html` — Tabla completa con estadísticas (total, presentes, ausentes, justificadas)
+
+6. **Admin**
+   - EntrenadorAdmin: list_display (nombre, apellido, especialidad, email, activo), filtros, búsqueda
+   - AsistenciaEntrenadorAdmin: list_display (entrenador, horario, fecha, tipo, justificada), filtros, readonly
+
+### Validaciones
+
+- **Asistencia**: unique_together (entrenador, horario, fecha) previene duplicados en mismo día
+
+### Cómo se hizo
+
+**CRUD básico:**
+- lista: ORDER BY -activo, apellido (activos primero)
+- detalle: muestra últimas 5 asistencias
+- print: genera reporte con estadísticas y campo de firmas
+- historial: tabla completa + stats (total, presentes, ausentes, justificadas)
+
+**Estadísticas en templates:**
+```python
+stats = {
+    'total': asistencias.count(),
+    'presentes': asistencias.filter(tipo='PRESENTE').count(),
+    'ausentes': asistencias.filter(tipo='AUSENTE').count(),
+    'justificadas': asistencias.filter(justificada=True).count(),
+}
+```
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -614,14 +685,12 @@ def save(self, *args, **kwargs):
 - Paso 5: Asistencia (Scanner HTML5 + registro por barcode + listado + validación de membresía)
 - Paso 6: Cobros (Descuento automático por tipo_miembro + comprobante printable)
 - Paso 7: Actividades (CRUD actividades + horarios + inscripciones con validación de capacidad)
+- Paso 8: Entrenadores (CRUD + asistencia de entrenador + reporte imprimible)
 
 ### ⏳ Próximos pasos
-- Paso 6: App cobros (descuento automático + comprobante print)
-- Paso 7: App actividades (CRUD + horarios + inscripciones)
-- Paso 8: App entrenadores (CRUD + asistencia de entrenador)
-- Paso 9: App reportes (3 vistas sin modelos)
-- Paso 10: Healthz + auditlog
-- Paso 11: Tests (pytest)
+- Paso 9: App reportes (3 vistas sin modelos: asistencias, cobros, membresias_vencidas)
+- Paso 10: Healthz + auditlog (Miembro y Cobro)
+- Paso 11: Tests (pytest-django + factory-boy)
 - Paso 12: Deploy (Render)
 - Paso 13: RF-11 biométrico (stub con WebSocket)
 
