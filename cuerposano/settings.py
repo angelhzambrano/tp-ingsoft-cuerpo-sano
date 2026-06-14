@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
-    'django_q',
     'miembros',
     'membresias',
     'asistencia',
@@ -113,19 +112,5 @@ if not DEBUG:
         'script-src': ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'cdn.tailwindcss.com'),
         'style-src': ("'self'", "'unsafe-inline'", 'cdn.jsdelivr.net', 'cdn.tailwindcss.com'),
     }
-
-Q_CLUSTER = {
-    'name': 'cuerposano',
-    'orm': 'default',
-    'timeout': 60,
-    'retry': 120,
-    'schedule_attempts': 1,
-    'scheduled': [
-        {
-            'func': 'membresias.tasks.actualizar_estados_membresias',
-            'schedule': 'daily',
-        },
-    ],
-}
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
