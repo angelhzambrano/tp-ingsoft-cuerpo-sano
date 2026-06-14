@@ -24,6 +24,7 @@
                     {% if user|has_group:"Admin" %}
                         <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm">Miembros</a>
                         <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm">Membresías</a>
+                        <a href="{% url 'asistencia:biometrico' %}" class="btn btn-ghost btn-sm">Asistencia</a>
                         <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm">Actividades</a>
                         <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm">Cobros</a>
                         <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm">Reportes</a>
