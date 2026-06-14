@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from miembros.models import Carnet, Miembro
 from membresias.models import Membresia
@@ -28,10 +29,10 @@ def biometrico_reader(request):
     return render(request, 'asistencia/biometrico.html', context)
 
 
-@login_required
+@csrf_exempt
 @require_http_methods(["POST"])
 def registrar_por_barcode(request):
-    """AJAX endpoint para procesar escaneo de código de barras"""
+    """AJAX endpoint para procesar escaneo de código de barras (sin autenticación para lector biométrico)"""
     try:
         data = json.loads(request.body)
         numero_carnet = data.get('numero_carnet', '').strip()
