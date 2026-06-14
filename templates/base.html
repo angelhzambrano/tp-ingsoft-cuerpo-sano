@@ -16,41 +16,43 @@
 <body>
     <div class="min-h-screen flex flex-col">
         {% if user.is_authenticated %}
-        <nav class="navbar bg-base-100 shadow-md">
+        <nav class="navbar bg-gradient-to-r from-indigo-600 to-blue-600 shadow-lg text-white">
             <div class="flex-1">
-                <a href="/" class="btn btn-ghost text-xl">Cuerpo Sano</a>
+                <a href="/" class="btn btn-ghost text-xl font-bold text-white hover:bg-white/10">
+                    💪 Cuerpo Sano
+                </a>
                 {% if user.groups.all|length > 0 %}
-                    <span class="divider divider-horizontal mx-2"></span>
+                    <div class="divider divider-horizontal mx-2 bg-white/20 h-6"></div>
                     {% if user|has_group:"Admin" %}
-                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm">Miembros</a>
-                        <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm">Membresías</a>
-                        <a href="{% url 'asistencia:biometrico' %}" class="btn btn-ghost btn-sm">Asistencia</a>
-                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm">Actividades</a>
-                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm">Cobros</a>
-                        <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm">Reportes</a>
+                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
+                        <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🎟️ Membresías</a>
+                        <a href="{% url 'asistencia:biometrico' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
+                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
+                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
+                        <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📊 Reportes</a>
                     {% elif user|has_group:"Recepcion" %}
-                        <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm">Asistencia</a>
-                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm">Miembros</a>
-                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm">Cobros</a>
+                        <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
+                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
+                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
                     {% elif user|has_group:"Entrenador" %}
-                        <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-ghost btn-sm">Mi Asistencia</a>
-                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm">Actividades</a>
+                        <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📋 Mi Asistencia</a>
+                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
                     {% endif %}
                 {% endif %}
             </div>
-            <div class="flex-none gap-2">
-                <span class="text-sm">{{ user.get_full_name|default:user.username }}</span>
+            <div class="flex-none gap-4">
+                <span class="text-sm font-medium">{{ user.get_full_name|default:user.username }}</span>
                 <div class="dropdown dropdown-end">
-                    <button class="btn btn-circle btn-ghost avatar placeholder">
-                        <div class="bg-primary text-primary-content w-10 rounded-full flex items-center justify-center">
-                            <span class="text-sm">{{ user.username|first|upper }}</span>
+                    <button class="btn btn-circle btn-ghost avatar placeholder border border-white/30">
+                        <div class="bg-white text-indigo-600 w-10 rounded-full flex items-center justify-center font-bold">
+                            {{ user.username|first|upper }}
                         </div>
                     </button>
-                    <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <ul class="dropdown-content z-[1] menu p-2 shadow bg-white rounded-box w-52 text-gray-800">
                         {% if user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                        <li><a href="{% url 'admin:index' %}">⚙️ Admin</a></li>
                         {% endif %}
-                        <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+                        <li><a href="{% url 'logout' %}">🚪 Cerrar sesión</a></li>
                     </ul>
                 </div>
             </div>

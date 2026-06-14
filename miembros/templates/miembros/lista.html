@@ -3,56 +3,66 @@
 {% block title %}Miembros - Cuerpo Sano{% endblock %}
 
 {% block content %}
-<div class="space-y-4">
+<div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold">Miembros</h1>
-        <a href="{% url 'miembros:crear' %}" class="btn btn-primary">+ Nuevo miembro</a>
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800">👥 Miembros</h1>
+            <p class="text-gray-600 text-sm mt-1">Total: <span class="font-semibold text-indigo-600">{{ total }} miembros</span></p>
+        </div>
+        <a href="{% url 'miembros:crear' %}" class="btn btn-lg bg-indigo-600 hover:bg-indigo-700 text-white border-0 shadow-md">
+            ➕ Nuevo Miembro
+        </a>
     </div>
 
     {% if miembros %}
-    <div class="overflow-x-auto">
-        <table class="table w-full">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>DNI</th>
-                    <th>Email</th>
-                    <th>Teléfono</th>
-                    <th>Tipo</th>
-                    <th>Activo</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for miembro in miembros %}
-                <tr class="hover">
-                    <td class="font-medium">{{ miembro.nombre }} {{ miembro.apellido }}</td>
-                    <td>{{ miembro.dni }}</td>
-                    <td>{{ miembro.email|default:'-' }}</td>
-                    <td>{{ miembro.telefono|default:'-' }}</td>
-                    <td>
-                        <span class="badge {% if miembro.tipo_miembro == 'REGULAR' %}badge-info{% elif miembro.tipo_miembro == 'ESTUDIANTE' %}badge-success{% else %}badge-warning{% endif %}">
-                            {{ miembro.get_tipo_miembro_display }}
-                        </span>
-                    </td>
-                    <td>
-                        {% if miembro.activo %}
-                        <span class="badge badge-success">Sí</span>
-                        {% else %}
-                        <span class="badge">No</span>
-                        {% endif %}
-                    </td>
-                    <td class="space-x-2">
-                        <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn btn-sm btn-ghost">Ver</a>
-                        <a href="{% url 'miembros:editar' miembro.pk %}" class="btn btn-sm btn-ghost">Editar</a>
-                        <a href="{% url 'miembros:carnet' miembro.pk %}" class="btn btn-sm btn-ghost">Carnet</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card bg-white shadow-lg border border-gray-100 rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table w-full text-sm">
+                <thead class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b-2 border-indigo-200">
+                    <tr>
+                        <th class="text-indigo-900 font-bold">👤 NOMBRE</th>
+                        <th class="text-indigo-900 font-bold">🆔 DNI</th>
+                        <th class="text-indigo-900 font-bold">📧 EMAIL</th>
+                        <th class="text-indigo-900 font-bold">☎️ TELÉFONO</th>
+                        <th class="text-indigo-900 font-bold">📌 TIPO</th>
+                        <th class="text-indigo-900 font-bold">✅ ESTADO</th>
+                        <th class="text-indigo-900 font-bold">⚡ ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for miembro in miembros %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="font-bold text-gray-900">{{ miembro.nombre }} {{ miembro.apellido }}</td>
+                        <td class="font-mono text-gray-700">{{ miembro.dni }}</td>
+                        <td class="text-gray-600">{{ miembro.email|default:'—' }}</td>
+                        <td class="text-gray-600">{{ miembro.telefono|default:'—' }}</td>
+                        <td>
+                            {% if miembro.tipo_miembro == 'REGULAR' %}
+                                <span class="badge badge-lg badge-info text-white font-semibold">🏋️ Regular</span>
+                            {% elif miembro.tipo_miembro == 'ESTUDIANTE' %}
+                                <span class="badge badge-lg badge-success text-white font-semibold">🎓 Estudiante</span>
+                            {% else %}
+                                <span class="badge badge-lg badge-warning text-gray-900 font-semibold">⭐ VIP</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if miembro.activo %}
+                            <span class="badge badge-lg badge-success gap-1 text-white font-semibold">✓ Activo</span>
+                            {% else %}
+                            <span class="badge badge-lg badge-ghost gap-1 font-semibold">✗ Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td class="space-x-1 flex gap-1">
+                            <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn btn-xs btn-outline btn-info" title="Ver detalles">👁️</a>
+                            <a href="{% url 'miembros:editar' miembro.pk %}" class="btn btn-xs btn-outline btn-primary" title="Editar">✏️</a>
+                            <a href="{% url 'miembros:carnet' miembro.pk %}" class="btn btn-xs btn-outline btn-success" title="Ver carnet">🎫</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    <p class="text-sm text-gray-500">Total: {{ total }} miembros</p>
     {% else %}
     <div class="alert alert-info">
         <div>No hay miembros registrados aún. <a href="{% url 'miembros:crear' %}" class="link">Crear el primero</a></div>
