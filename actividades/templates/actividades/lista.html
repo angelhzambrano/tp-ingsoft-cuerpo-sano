@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Actividades{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">🏋️ Actividades</h1>
+        <a href="{% url 'actividades:crear' %}" class="btn btn-primary">Nueva Actividad</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% if actividades %}
+            {% for actividad in actividades %}
+                <div class="card bg-base-100 shadow-md">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ actividad.nombre }}</h2>
+                        {% if actividad.descripcion %}
+                            <p class="text-sm text-gray-600">{{ actividad.descripcion|truncatewords:15 }}</p>
+                        {% endif %}
+                        <div class="mt-2 space-y-1">
+                            <div class="text-sm">
+                                <span class="text-gray-600">Capacidad:</span>
+                                <span class="font-semibold">{{ actividad.capacidad_maxima }} personas</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-gray-600">Horarios:</span>
+                                <span class="font-semibold">{{ actividad.horarios.count }}</span>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-4">
+                            <a href="{% url 'actividades:horarios_actividad' actividad.pk %}" class="btn btn-sm btn-ghost">Horarios</a>
+                            <a href="{% url 'actividades:detalle' actividad.pk %}" class="btn btn-sm btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info col-span-full">
+                <p>No hay actividades registradas. <a href="{% url 'actividades:crear' %}" class="link">Crear una</a></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 flex justify-between items-center">
+        <div class="text-sm text-gray-600">
+            Total: <strong>{{ total }}</strong> actividad(es)
+        </div>
+        <a href="{% url 'actividades:lista_horarios' %}" class="btn btn-ghost btn-sm">Ver todos los horarios</a>
+    </div>
+</div>
+{% endblock %}

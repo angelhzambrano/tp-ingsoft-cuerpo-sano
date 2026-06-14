@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{% if actividad %}Editar{% else %}Nueva{% endif %} Actividad{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">
+        {% if actividad %}Editar Actividad{% else %}Nueva Actividad{% endif %}
+    </h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Nombre *</span>
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.nombre.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Descripción</span>
+                    </label>
+                    {{ form.descripcion }}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Capacidad Máxima *</span>
+                    </label>
+                    {{ form.capacidad_maxima }}
+                    {% if form.capacidad_maxima.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.capacidad_maxima.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'actividades:lista' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

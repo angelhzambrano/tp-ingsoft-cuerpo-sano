@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Inscripción{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">Inscribir Miembro a Actividad</h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Miembro *</span>
+                    </label>
+                    {{ form.miembro }}
+                    {% if form.miembro.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.miembro.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Horario de Clase *</span>
+                    </label>
+                    {{ form.horario }}
+                    {% if form.horario.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.horario.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                    <label class="label">
+                        <span class="label-text-alt text-gray-500">Selecciona una clase disponible</span>
+                    </label>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'actividades:lista_horarios' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Inscribir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

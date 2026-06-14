@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}{% if horario %}Editar{% else %}Nuevo{% endif %} Horario{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">
+        {% if horario %}Editar Horario{% else %}Nuevo Horario de Clase{% endif %}
+    </h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Actividad *</span>
+                    </label>
+                    {{ form.actividad }}
+                    {% if form.actividad.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.actividad.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Entrenador</span>
+                    </label>
+                    {{ form.entrenador }}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Día de la Semana *</span>
+                    </label>
+                    {{ form.dia_semana }}
+                    {% if form.dia_semana.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.dia_semana.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Hora Inicio *</span>
+                        </label>
+                        {{ form.hora_inicio }}
+                        {% if form.hora_inicio.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.hora_inicio.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Hora Fin *</span>
+                        </label>
+                        {{ form.hora_fin }}
+                        {% if form.hora_fin.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.hora_fin.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Sala</span>
+                    </label>
+                    {{ form.sala }}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">
+                        {{ form.non_field_errors.0 }}
+                    </div>
+                {% endif %}
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'actividades:lista_horarios' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

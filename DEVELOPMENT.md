@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 6/13 completado)
+**Status:** En construcción (Paso 7/13 completado)
 
 ---
 
@@ -508,6 +508,102 @@ fetch('/asistencia/api/barcode/', {
 
 ---
 
+## Paso 7: App Actividades (CRUD + Horarios + Inscripciones)
+
+**Objetivo:** Gestión completa de actividades, horarios y inscripciones con validación de capacidad
+
+### Qué se hizo
+
+1. **Modelos** (ya existían)
+   - `Actividad`: nombre, descripción, capacidad_maxima
+   - `HorarioClase`: actividad (FK), entrenador (FK/NULL), dia_semana (LUN-SAB), hora_inicio, hora_fin, sala
+   - `Inscripcion`: miembro (FK), horario (FK), fecha_inscripcion (auto_now_add), estado (ACTIVA/CANCELADA)
+   - Validación en Inscripcion.save(): lanza ValidationError si clase está llena
+   - unique_together (miembro, horario) previene inscripciones duplicadas
+
+2. **Formularios (`forms.py`)**
+   - `ActividadForm`: nombre, descripcion, capacidad_maxima
+   - `HorarioClaseForm`: actividad, entrenador, dia_semana, hora_inicio, hora_fin, sala
+     - Validación: hora_fin > hora_inicio
+   - `InscripcionForm`: miembro (filtrado a activos), horario
+     - Validación en save() de modelo
+
+3. **Vistas CRUD**
+   - **Actividades:**
+     - `lista_actividades()` — Grid de actividades con capacidad e info rápida
+     - `crear_actividad()` — Form para nueva actividad
+     - `detalle_actividad()` — Card con info + horarios de esa actividad
+     - `editar_actividad()` — Edit form
+   
+   - **Horarios:**
+     - `lista_horarios()` — Tabla global de todos los horarios
+     - `crear_horario()` — Form para nuevo horario
+     - `editar_horario()` — Edit form
+     - `horarios_actividad()` — Cards de horarios específicos con contador de inscritos
+   
+   - **Inscripciones:**
+     - `inscripciones_horario()` — Tabla con miembros inscritos + contador
+     - `inscribir_miembro()` — Form para crear inscripción (con validación de capacidad)
+     - `cancelar_inscripcion()` — Confirmación + cambio de estado a CANCELADA
+
+4. **URLs**
+   ```python
+   /actividades/                               # Lista actividades
+   /actividades/nueva/                         # Crear actividad
+   /actividades/<id>/                          # Detalle actividad
+   /actividades/<id>/editar/                   # Editar actividad
+   /actividades/<id>/horarios/                 # Horarios de esa actividad
+   /actividades/horarios/                      # Lista global de horarios
+   /actividades/horarios/nuevo/                # Crear horario
+   /actividades/horarios/<id>/editar/          # Editar horario
+   /actividades/horarios/<id>/inscripciones/   # Ver inscritos en horario
+   /actividades/inscribir/                     # Crear inscripción
+   /actividades/inscripcion/<id>/cancelar/     # Cancelar inscripción
+   ```
+
+5. **Templates**
+   - `lista.html` — Grid de actividades con cards
+   - `detalle.html` — Info + horarios asociados
+   - `form_actividad.html` — Formulario crear/editar
+   - `lista_horarios.html` — Tabla global: actividad, día, hora, entrenador, sala
+   - `horarios_actividad.html` — Cards de horarios con contador inscritos/capacidad + badge de disponibilidad
+   - `inscripciones_horario.html` — Tabla con miembros inscritos + botón cancelar
+   - `form_inscripcion.html` — Formulario seleccionar miembro + horario
+   - `confirmar_cancelar.html` — Confirmación antes de cancelar
+
+6. **Admin**
+   - ActividadAdmin: list_display (nombre, capacidad, horarios_count)
+   - HorarioClaseAdmin: list_display (actividad, dia, horas, entrenador, sala), filtros
+   - InscripcionAdmin: list_display (miembro, horario, fecha, estado), filtros
+
+### Validaciones
+
+- **Horario**: hora_fin > hora_inicio (validado en form)
+- **Inscripción**: no permite si inscritos >= capacidad (validado en model.save())
+- **Inscripción**: unique_together previene duplicados
+- **Miembros**: solo activos en selector de inscripciones
+
+### Cómo se hizo
+
+**Validación de capacidad:**
+```python
+def save(self, *args, **kwargs):
+    inscripciones_activas = self.horario.inscripciones.filter(estado='ACTIVA').count()
+    if self.pk is None and inscripciones_activas >= self.horario.actividad.capacidad_maxima:
+        raise ValidationError('La clase está llena')
+    super().save(*args, **kwargs)
+```
+
+**Contador en UI:**
+```html
+<div class="text-3xl font-bold">{{ horario.inscripciones.count }}/{{ actividad.capacidad_maxima }}</div>
+{% if horario.inscripciones.count == actividad.capacidad_maxima %}
+    <span class="badge badge-error">Lleno</span>
+{% endif %}
+```
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -517,6 +613,7 @@ fetch('/asistencia/api/barcode/', {
 - Paso 4: Membresias (CRUD + tipos + auto-update de estado con django-q2)
 - Paso 5: Asistencia (Scanner HTML5 + registro por barcode + listado + validación de membresía)
 - Paso 6: Cobros (Descuento automático por tipo_miembro + comprobante printable)
+- Paso 7: Actividades (CRUD actividades + horarios + inscripciones con validación de capacidad)
 
 ### ⏳ Próximos pasos
 - Paso 6: App cobros (descuento automático + comprobante print)

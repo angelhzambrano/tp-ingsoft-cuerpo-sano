@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Inscritos - {{ horario }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-4xl">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Inscritos en {{ horario.get_dia_semana_display }} {{ horario.hora_inicio|time:"H:i" }}</h1>
+        <a href="{% url 'actividades:horarios_actividad' horario.actividad.pk %}" class="btn btn-ghost">Volver</a>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="stat bg-base-100">
+            <div class="stat-title">Total Inscritos</div>
+            <div class="stat-value">{{ total }}</div>
+        </div>
+        <div class="stat bg-base-100">
+            <div class="stat-title">Capacidad</div>
+            <div class="stat-value">{{ horario.actividad.capacidad_maxima }}</div>
+        </div>
+        <div class="stat bg-base-100">
+            <div class="stat-title">Disponibles</div>
+            <div class="stat-value">{{ disponibles }}</div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        {% if inscripciones %}
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>Miembro</th>
+                        <th>DNI</th>
+                        <th>Tipo</th>
+                        <th>Fecha Inscripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscripcion in inscripciones %}
+                        <tr>
+                            <td class="font-semibold">{{ inscripcion.miembro }}</td>
+                            <td>{{ inscripcion.miembro.dni }}</td>
+                            <td>{{ inscripcion.miembro.get_tipo_miembro_display }}</td>
+                            <td>{{ inscripcion.fecha_inscripcion|date:"d/m/Y" }}</td>
+                            <td>
+                                <form method="post" action="{% url 'actividades:cancelar_inscripcion' inscripcion.pk %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-ghost" onclick="return confirm('¿Cancelar inscripción?')">Cancelar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <p>No hay miembros inscritos en este horario.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
