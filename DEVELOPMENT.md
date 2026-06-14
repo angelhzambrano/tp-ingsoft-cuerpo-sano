@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 7/13 completado)
+**Status:** En construcción (Paso 9/13 completado)
 
 ---
 
@@ -675,6 +675,71 @@ stats = {
 
 ---
 
+## Paso 9: App Reportes (3 Vistas de Análisis)
+
+**Objetivo:** Generar reportes analíticos SIN crear nuevos modelos, utilizando datos existentes
+
+### Qué se hizo
+
+1. **Sin modelos propios**
+   - Reportes utilizan `Asistencia`, `Cobro`, `Membresia` existentes
+   - NO se crearon nuevas tablas
+
+2. **Formularios de filtro (`forms.py`)**
+   - `FiltroAsistenciasForm`: fecha_inicio, fecha_fin, miembro, metodo
+   - `FiltroCobrosForm`: fecha_inicio, fecha_fin, forma_pago, miembro
+   - `FiltroMembresiasVencidasForm`: fecha_vencimiento, tipo_miembro
+
+3. **Vistas (3 reportes)**
+   - **`reporte_asistencias()`**
+     - Filtra por: rango de fechas, miembro específico, método (BARCODE/MANUAL)
+     - Stats: total asistencias, miembros únicos, breakdown por método
+     - Query: `Asistencia.objects.filter(...)`
+   
+   - **`reporte_cobros()`**
+     - Filtra por: rango de fechas, forma de pago, miembro
+     - Stats: total cobros, monto total, descuentos aplicados, breakdown por forma de pago
+     - Query: `Cobro.objects.filter(...)` con `Sum` aggregation
+   
+   - **`membresias_vencidas()`**
+     - Filtra por: fecha vencimiento, tipo de miembro
+     - Stats: total vencidas, monto no renovado, días promedio sin renovar, breakdown por tipo
+     - Query: `Membresia.objects.filter(estado='VENCIDA').filter(...)`
+
+4. **URLs**
+   ```python
+   /reportes/asistencias/          # Filtrable por fecha, miembro, método
+   /reportes/cobros/               # Filtrable por fecha, forma_pago, miembro
+   /reportes/membresias-vencidas/  # Filtrable por vencimiento, tipo_miembro
+   ```
+
+5. **Templates**
+   - `asistencias.html` — Card filtros + stats + tabla con Fecha/Hora/Miembro/DNI/Método
+   - `cobros.html` — Card filtros + stats + tabla con Monto/Descuento/Forma Pago
+   - `membresias_vencidas.html` — Card filtros + stats + tabla con Fecha vencimiento/Días vencida
+
+### Cómo se hizo
+
+**Agregaciones:**
+```python
+stats = {
+    'total': asistencias.count(),
+    'monto_total': cobros.aggregate(Sum('monto_final'))['monto_final__sum'] or 0,
+    'miembros_unicos': asistencias.values('miembro').distinct().count(),
+}
+```
+
+**Filtros dinámicos:**
+```python
+if form.is_valid():
+    if form.cleaned_data.get('fecha_inicio'):
+        queryset = queryset.filter(fecha__gte=fecha_inicio)
+```
+
+**Sin paginación** — reportes muestran todos los registros (útil para export manual)
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -686,9 +751,9 @@ stats = {
 - Paso 6: Cobros (Descuento automático por tipo_miembro + comprobante printable)
 - Paso 7: Actividades (CRUD actividades + horarios + inscripciones con validación de capacidad)
 - Paso 8: Entrenadores (CRUD + asistencia de entrenador + reporte imprimible)
+- Paso 9: Reportes (3 vistas: asistencias, cobros, membresías vencidas con filtros)
 
 ### ⏳ Próximos pasos
-- Paso 9: App reportes (3 vistas sin modelos: asistencias, cobros, membresias_vencidas)
 - Paso 10: Healthz + auditlog (Miembro y Cobro)
 - Paso 11: Tests (pytest-django + factory-boy)
 - Paso 12: Deploy (Render)

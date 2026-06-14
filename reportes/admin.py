@@ -1,3 +1,4 @@
 from django.contrib import admin
 
-# Register your models here.
+# Reportes no tienen modelos propios.
+# Utilizan datos de: Asistencia, Cobro, Membresia

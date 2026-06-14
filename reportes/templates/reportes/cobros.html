@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de Cobros{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6">Reporte de Cobros</h1>
+
+    <div class="card bg-base-100 shadow-md mb-6">
+        <div class="card-body">
+            <h2 class="card-title text-lg mb-4">Filtros</h2>
+            <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-sm">Fecha Inicio</span>
+                    </label>
+                    {{ form.fecha_inicio }}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-sm">Fecha Fin</span>
+                    </label>
+                    {{ form.fecha_fin }}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-sm">Forma de Pago</span>
+                    </label>
+                    {{ form.forma_pago }}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-sm">Miembro</span>
+                    </label>
+                    {{ form.miembro }}
+                </div>
+
+                <div class="form-control md:col-span-4 md:flex-row gap-2 justify-end">
+                    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+                    <a href="{% url 'reportes:cobros' %}" class="btn btn-ghost btn-sm">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="stat bg-base-100 shadow-md">
+            <div class="stat-title">Total Cobros</div>
+            <div class="stat-value text-3xl">{{ stats.total_cobros }}</div>
+        </div>
+        <div class="stat bg-base-100 shadow-md">
+            <div class="stat-title">Monto Total</div>
+            <div class="stat-value text-2xl">${{ stats.monto_total|floatformat:0 }}</div>
+        </div>
+        <div class="stat bg-base-100 shadow-md">
+            <div class="stat-title">Descuentos</div>
+            <div class="stat-value text-2xl text-error">${{ stats.descuento_total|floatformat:0 }}</div>
+        </div>
+        <div class="stat bg-base-100 shadow-md">
+            <div class="stat-title">Por Forma</div>
+            <div class="stat-value text-lg">
+                <div class="text-sm">💵 {{ stats.por_forma.EFECTIVO }}</div>
+                <div class="text-sm">🏦 {{ stats.por_forma.TRANSFERENCIA }}</div>
+                <div class="text-sm">💳 {{ stats.por_forma.TARJETA }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Detalle de Cobros</h2>
+
+            {% if cobros %}
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Miembro</th>
+                                <th>Monto Base</th>
+                                <th>Descuento</th>
+                                <th>Monto Final</th>
+                                <th>Forma Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cobro in cobros %}
+                                <tr>
+                                    <td>{{ cobro.fecha_cobro|date:"d/m/Y" }}</td>
+                                    <td class="font-semibold">{{ cobro.miembro }}</td>
+                                    <td>${{ cobro.monto_base|floatformat:0 }}</td>
+                                    <td class="text-error">${{ cobro.descuento_monto|floatformat:0 }}</td>
+                                    <td class="font-semibold text-success">${{ cobro.monto_final|floatformat:0 }}</td>
+                                    <td>
+                                        {% if cobro.forma_pago == 'EFECTIVO' %}
+                                            <span class="badge badge-success">Efectivo</span>
+                                        {% elif cobro.forma_pago == 'TRANSFERENCIA' %}
+                                            <span class="badge badge-info">Transferencia</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">Tarjeta</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p>No hay cobros para los filtros seleccionados.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
