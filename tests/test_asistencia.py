@@ -1,4 +1,5 @@
 import pytest
+import json
 from django.test import Client
 from django.urls import reverse
 from asistencia.models import Asistencia
@@ -72,3 +73,81 @@ class TestAsistenciaValidacion:
             metodo='BARCODE'
         )
         assert 'Juan Pérez' in str(asistencia)
+
+
+class TestBiometricoAPI:
+    """Tests para API biométrica (RF-11)"""
+
+    def test_biometrico_escaneo_exitoso(self, client, db):
+        """Caso 6: Escaneo biométrico exitoso registra asistencia"""
+        miembro = MiembroFactory()
+        carnet = CarnetFactory(miembro=miembro)
+        membresia = MembresiaFactory(miembro=miembro, estado='ACTIVA')
+
+        response = client.post(
+            '/asistencia/api/barcode/',
+            data=json.dumps({'numero_carnet': carnet.numero_carnet}),
+            content_type='application/json'
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data['success'] is True
+        assert 'registrado exitosamente' in data['message']
+        assert Asistencia.objects.filter(miembro=miembro, metodo='BARCODE').exists()
+
+    def test_biometrico_carnet_no_existe(self, client, db):
+        """Caso 7: Código de carnet inexistente devuelve error"""
+        response = client.post(
+            '/asistencia/api/barcode/',
+            data=json.dumps({'numero_carnet': 'NOEXISTE'}),
+            content_type='application/json'
+        )
+
+        assert response.status_code == 404
+
+    def test_biometrico_miembro_inactivo(self, client, db):
+        """Caso 8: Miembro inactivo no puede registrar asistencia"""
+        miembro = MiembroFactory(activo=False)
+        carnet = CarnetFactory(miembro=miembro)
+        membresia = MembresiaFactory(miembro=miembro, estado='ACTIVA')
+
+        response = client.post(
+            '/asistencia/api/barcode/',
+            data=json.dumps({'numero_carnet': carnet.numero_carnet}),
+            content_type='application/json'
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data['success'] is False
+        assert 'inactivo' in data['error']
+
+    def test_biometrico_membresia_vencida(self, client, db):
+        """Caso 9: Membresía vencida no permite escaneo"""
+        miembro = MiembroFactory()
+        carnet = CarnetFactory(miembro=miembro)
+        membresia = MembresiaFactory(miembro=miembro, estado='VENCIDA')
+
+        response = client.post(
+            '/asistencia/api/barcode/',
+            data=json.dumps({'numero_carnet': carnet.numero_carnet}),
+            content_type='application/json'
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data['success'] is False
+        assert 'Membresía vencida' in data['error']
+
+    def test_biometrico_reader_view_requiere_login(self, client, db):
+        """Caso 10: Vista del lector biométrico requiere autenticación"""
+        response = client.get('/asistencia/biometrico/')
+        assert response.status_code == 302  # Redirect to login
+
+    def test_biometrico_reader_view_autenticado(self, client, db, admin_user):
+        """Caso 11: Usuario autenticado puede acceder al lector"""
+        client.force_login(admin_user)
+        response = client.get('/asistencia/biometrico/')
+        assert response.status_code == 200
+        assert 'biometrico' in response.content.decode()

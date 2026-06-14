@@ -19,6 +19,16 @@ def registro_asistencia(request):
 
 
 @login_required
+def biometrico_reader(request):
+    """Interfaz del lector biométrico (RF-11)"""
+    context = {
+        'title': 'Lector Biométrico',
+        'ws_url': 'ws://127.0.0.1:7878' if not request.is_secure() else 'wss://localhost:7878'
+    }
+    return render(request, 'asistencia/biometrico.html', context)
+
+
+@login_required
 @require_http_methods(["POST"])
 def registrar_por_barcode(request):
     """AJAX endpoint para procesar escaneo de código de barras"""

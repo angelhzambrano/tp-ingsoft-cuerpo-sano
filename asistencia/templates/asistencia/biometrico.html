@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Lector Biométrico - Cuerpo Sano{% endblock %}
+
+{% block content %}
+<div class="container mx-auto max-w-2xl py-8 px-4">
+    <h1 class="text-4xl font-bold mb-8 text-center">📱 Lector Biométrico</h1>
+
+    <!-- Estado del lector -->
+    <div class="mb-8">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <!-- Indicador de estado -->
+                <div id="status" class="text-center py-4">
+                    <div class="badge badge-lg badge-success animate-pulse">
+                        <span class="mr-2">🟢</span>
+                        Esperando escaneo...
+                    </div>
+                </div>
+
+                <!-- Input de código (invisible pero enfocado) -->
+                <input 
+                    id="barcode-input" 
+                    type="text" 
+                    class="input input-bordered w-full opacity-0 h-0 absolute"
+                    placeholder="Escanea un código de barras..."
+                    autofocus
+                >
+
+                <!-- Área de escaneo visual -->
+                <div class="text-center py-8">
+                    <svg class="w-32 h-32 mx-auto text-primary opacity-50 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <p class="text-gray-500 mt-4 text-lg">Acerca el carnet al lector</p>
+                </div>
+
+                <!-- Último registro -->
+                <div id="last-scan" class="mt-6 p-4 bg-base-200 rounded-lg hidden">
+                    <p class="text-sm text-gray-600">Último escaneo:</p>
+                    <p id="scan-text" class="text-xl font-bold text-success"></p>
+                    <p id="scan-time" class="text-sm text-gray-500"></p>
+                </div>
+
+                <!-- Errores -->
+                <div id="error-box" class="mt-6 p-4 bg-error text-error-content rounded-lg hidden">
+                    <p id="error-text" class="font-bold"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registros recientes -->
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-2xl">Registros de Hoy</h2>
+            <div id="recent-scans" class="space-y-2">
+                <p class="text-gray-500 text-center py-4">Cargando registros...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="mt-8 flex gap-4 justify-center">
+        <a href="{% url 'asistencia:manual' %}" class="btn btn-outline btn-primary">
+            ➕ Registro Manual
+        </a>
+        <a href="{% url 'asistencia:listado' %}" class="btn btn-outline btn-secondary">
+            📋 Ver Listado
+        </a>
+    </div>
+</div>
+
+<script>
+const barcodeInput = document.getElementById('barcode-input');
+const statusDiv = document.getElementById('status');
+const lastScanDiv = document.getElementById('last-scan');
+const errorBox = document.getElementById('error-box');
+const recentScansDiv = document.getElementById('recent-scans');
+
+// Ensure input always focused
+window.addEventListener('click', () => barcodeInput.focus());
+
+// Procesar código escaneado
+barcodeInput.addEventListener('change', async function(e) {
+    const codigoBarras = this.value.trim();
+    
+    if (!codigoBarras) return;
+
+    // Limpiar input
+    this.value = '';
+
+    // Enviar al servidor
+    try {
+        const response = await fetch('{% url "asistencia:api_barcode" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ numero_carnet: codigoBarras })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Éxito
+            statusDiv.innerHTML = `
+                <div class="badge badge-lg badge-success animate-pulse">
+                    <span class="mr-2">✓</span>
+                    ${data.message}
+                </div>
+            `;
+            
+            lastScanDiv.classList.remove('hidden');
+            document.getElementById('scan-text').textContent = data.miembro;
+            document.getElementById('scan-time').textContent = new Date().toLocaleTimeString('es-AR');
+            
+            errorBox.classList.add('hidden');
+
+            // Reset en 3 segundos
+            setTimeout(() => {
+                statusDiv.innerHTML = `
+                    <div class="badge badge-lg badge-success animate-pulse">
+                        <span class="mr-2">🟢</span>
+                        Esperando escaneo...
+                    </div>
+                `;
+            }, 3000);
+
+            loadRecentScans();
+        } else {
+            // Error
+            statusDiv.innerHTML = `
+                <div class="badge badge-lg badge-error animate-pulse">
+                    <span class="mr-2">✗</span>
+                    Error en escaneo
+                </div>
+            `;
+            
+            errorBox.classList.remove('hidden');
+            document.getElementById('error-text').textContent = data.error;
+
+            lastScanDiv.classList.add('hidden');
+        }
+    } catch (error) {
+        statusDiv.innerHTML = `
+            <div class="badge badge-lg badge-error animate-pulse">
+                <span class="mr-2">✗</span>
+                Error de conexión
+            </div>
+        `;
+        console.error('Error:', error);
+    }
+});
+
+// Cargar escaneos recientes
+async function loadRecentScans() {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+        const response = await fetch(`{% url 'asistencia:listado' %}?fecha_inicio=${today}&fecha_fin=${today}`);
+        const html = await response.text();
+        
+        // Extraer tabla de asistencias del HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const rows = doc.querySelectorAll('tbody tr');
+        
+        if (rows.length > 0) {
+            recentScansDiv.innerHTML = Array.from(rows).slice(0, 5).map((row, i) => {
+                const cells = row.querySelectorAll('td');
+                return `
+                    <div class="flex justify-between items-center p-2 bg-base-200 rounded">
+                        <span class="font-semibold">${cells[1]?.textContent || 'N/A'}</span>
+                        <span class="text-sm text-gray-500">${cells[2]?.textContent || ''}</span>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            recentScansDiv.innerHTML = '<p class="text-gray-500 text-center">Sin registros hoy</p>';
+        }
+    } catch (error) {
+        console.error('Error cargando registros:', error);
+    }
+}
+
+// Cargar registros al iniciar
+loadRecentScans();
+setInterval(loadRecentScans, 10000); // Actualizar cada 10 segundos
+
+// Enfoque inicial
+barcodeInput.focus();
+</script>
+{% endblock %}
