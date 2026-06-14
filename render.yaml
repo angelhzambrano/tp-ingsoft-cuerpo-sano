@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: cuerpo-sano
+    runtime: python39
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn cuerposano.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        scope: project
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        scope: project
+      - key: CLOUDINARY_URL
+        scope: project
+
+databases:
+  - name: cuerpo-sano-db
+    databaseName: cuerposano_db
+    user: cuerposano_user
+    plan: free
