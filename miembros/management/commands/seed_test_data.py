@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User, Group
 from miembros.models import Miembro, Carnet
 from membresias.models import Membresia, TipoMembresia
 from datetime import datetime, timedelta
@@ -59,5 +60,14 @@ class Command(BaseCommand):
 
             if created:
                 self.stdout.write(f'✓ {miembro} (carnet: {carnet.numero_carnet})')
+
+        # Asignar grupo Admin al usuario admin
+        try:
+            admin_user = User.objects.get(username='admin')
+            admin_group, _ = Group.objects.get_or_create(name='Admin')
+            admin_user.groups.add(admin_group)
+            self.stdout.write(self.style.SUCCESS('✓ Grupo Admin asignado al usuario admin'))
+        except User.DoesNotExist:
+            pass
 
         self.stdout.write(self.style.SUCCESS('\n✅ Datos de prueba creados'))
