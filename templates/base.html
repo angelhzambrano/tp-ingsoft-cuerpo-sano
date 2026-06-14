@@ -1,0 +1,81 @@
+{% load custom_tags %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cuerpo Sano{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            nav, .no-print { display: none !important; }
+            body { font-size: 12pt; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        {% if user.is_authenticated %}
+        <nav class="navbar bg-base-100 shadow-md">
+            <div class="flex-1">
+                <a href="/" class="btn btn-ghost text-xl">Cuerpo Sano</a>
+                {% if user.groups.all|length > 0 %}
+                    <span class="divider divider-horizontal mx-2"></span>
+                    {% if user|has_group:"Admin" %}
+                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm">Miembros</a>
+                        <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm">Membresías</a>
+                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm">Actividades</a>
+                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm">Cobros</a>
+                        <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm">Reportes</a>
+                    {% elif user|has_group:"Recepcion" %}
+                        <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm">Asistencia</a>
+                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm">Miembros</a>
+                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm">Cobros</a>
+                    {% elif user|has_group:"Entrenador" %}
+                        <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-ghost btn-sm">Mi Asistencia</a>
+                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm">Actividades</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="flex-none gap-2">
+                <span class="text-sm">{{ user.get_full_name|default:user.username }}</span>
+                <div class="dropdown dropdown-end">
+                    <button class="btn btn-circle btn-ghost avatar placeholder">
+                        <div class="bg-primary text-primary-content w-10 rounded-full flex items-center justify-center">
+                            <span class="text-sm">{{ user.username|first|upper }}</span>
+                        </div>
+                    </button>
+                    <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                        {% if user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% endif %}
+
+        <main class="flex-1 container mx-auto px-4 py-8">
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} mb-2">
+                    <div>{{ message }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="bg-base-200 text-center py-4 text-sm">
+            Cuerpo Sano &copy; 2026
+        </footer>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

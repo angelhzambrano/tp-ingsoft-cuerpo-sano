@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if miembro %}Editar{% else %}Nuevo{% endif %} Miembro - Cuerpo Sano{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+    <h1 class="text-3xl font-bold">{% if miembro %}Editar miembro{% else %}Nuevo miembro{% endif %}</h1>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-error">
+            <div>
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Nombre -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Nombre *</span>
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.nombre.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <!-- Apellido -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Apellido *</span>
+                </label>
+                {{ form.apellido }}
+                {% if form.apellido.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.apellido.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <!-- DNI -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">DNI *</span>
+                </label>
+                {{ form.dni }}
+                {% if form.dni.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.dni.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Email</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.email.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Teléfono</span>
+                </label>
+                {{ form.telefono }}
+                {% if form.telefono.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.telefono.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+
+            <!-- Tipo de miembro -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Tipo de miembro *</span>
+                </label>
+                {{ form.tipo_miembro }}
+                {% if form.tipo_miembro.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.tipo_miembro.errors.0 }}</span>
+                </label>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Foto -->
+        <div class="form-control">
+            <label class="label">
+                <span class="label-text">Foto (máx. 5MB)</span>
+            </label>
+            {{ form.foto }}
+            {% if form.foto.errors %}
+            <label class="label">
+                <span class="label-text-alt text-error">{{ form.foto.errors.0 }}</span>
+            </label>
+            {% endif %}
+        </div>
+
+        <!-- Activo -->
+        <div class="form-control">
+            <label class="label cursor-pointer">
+                {{ form.activo }}
+                <span class="label-text">Miembro activo</span>
+            </label>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                {% if miembro %}Guardar cambios{% else %}Crear miembro{% endif %}
+            </button>
+            <a href="{% url 'miembros:lista' %}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

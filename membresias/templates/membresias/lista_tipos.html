@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Tipos de Membresía{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Tipos de Membresía</h1>
+        <a href="{% url 'membresias:crear_tipo' %}" class="btn btn-primary">Nuevo Tipo</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% if tipos %}
+            {% for tipo in tipos %}
+                <div class="card bg-base-100 shadow-md">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ tipo.nombre }}</h2>
+                        {% if tipo.descripcion %}
+                            <p class="text-sm text-gray-600">{{ tipo.descripcion }}</p>
+                        {% endif %}
+                        <div class="mt-4 space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Precio:</span>
+                                <span class="font-semibold">${{ tipo.precio }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Duración:</span>
+                                <span class="font-semibold">{{ tipo.duracion_dias }} días</span>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-4">
+                            <a href="{% url 'membresias:editar_tipo' tipo.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info col-span-full">
+                <p>No hay tipos de membresía. <a href="{% url 'membresias:crear_tipo' %}" class="link">Crear uno</a></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 text-sm text-gray-600">
+        Total: <strong>{{ total }}</strong> tipo(s)
+    </div>
+</div>
+{% endblock %}

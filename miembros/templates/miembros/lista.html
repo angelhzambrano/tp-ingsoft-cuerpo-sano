@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Miembros - Cuerpo Sano{% endblock %}
+
+{% block content %}
+<div class="space-y-4">
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold">Miembros</h1>
+        <a href="{% url 'miembros:crear' %}" class="btn btn-primary">+ Nuevo miembro</a>
+    </div>
+
+    {% if miembros %}
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>DNI</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Tipo</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for miembro in miembros %}
+                <tr class="hover">
+                    <td class="font-medium">{{ miembro.nombre }} {{ miembro.apellido }}</td>
+                    <td>{{ miembro.dni }}</td>
+                    <td>{{ miembro.email|default:'-' }}</td>
+                    <td>{{ miembro.telefono|default:'-' }}</td>
+                    <td>
+                        <span class="badge {% if miembro.tipo_miembro == 'REGULAR' %}badge-info{% elif miembro.tipo_miembro == 'ESTUDIANTE' %}badge-success{% else %}badge-warning{% endif %}">
+                            {{ miembro.get_tipo_miembro_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if miembro.activo %}
+                        <span class="badge badge-success">Sí</span>
+                        {% else %}
+                        <span class="badge">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="space-x-2">
+                        <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn btn-sm btn-ghost">Ver</a>
+                        <a href="{% url 'miembros:editar' miembro.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                        <a href="{% url 'miembros:carnet' miembro.pk %}" class="btn btn-sm btn-ghost">Carnet</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="text-sm text-gray-500">Total: {{ total }} miembros</p>
+    {% else %}
+    <div class="alert alert-info">
+        <div>No hay miembros registrados aún. <a href="{% url 'miembros:crear' %}" class="link">Crear el primero</a></div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

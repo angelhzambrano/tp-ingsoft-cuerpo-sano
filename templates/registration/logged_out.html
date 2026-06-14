@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Sesión cerrada - Cuerpo Sano{% endblock %}
+
+{% block content %}
+<div class="flex justify-center">
+    <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body text-center">
+            <h2 class="card-title text-center mb-4">Sesión cerrada</h2>
+            <p class="mb-6">Tu sesión ha sido cerrada correctamente.</p>
+            <a href="{% url 'django.contrib.auth.login' %}" class="btn btn-primary">Volver a iniciar sesión</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnet {{ carnet.numero_carnet }} - Cuerpo Sano</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .carnet {
+                page-break-after: avoid;
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        @media screen {
+            body {
+                background: #f0f0f0;
+            }
+            .carnet-container {
+                display: flex;
+                justify-content: center;
+                padding: 20px;
+            }
+        }
+
+        .carnet {
+            width: 85.6mm;
+            height: 53.98mm;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            padding: 8mm;
+            background: white;
+            font-family: Arial, sans-serif;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .carnet-header {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 4mm;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2mm;
+        }
+
+        .carnet-content {
+            display: flex;
+            height: 100%;
+            gap: 4mm;
+        }
+
+        .carnet-foto {
+            flex-shrink: 0;
+            width: 25mm;
+            height: 30mm;
+            border: 1px solid #999;
+            overflow: hidden;
+        }
+
+        .carnet-foto img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carnet-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 8pt;
+        }
+
+        .carnet-info-row {
+            display: flex;
+            gap: 2mm;
+        }
+
+        .carnet-info-label {
+            font-weight: bold;
+            min-width: 20mm;
+        }
+
+        .carnet-barcode {
+            text-align: center;
+            padding-top: 2mm;
+            border-top: 1px solid #999;
+        }
+
+        .carnet-barcode img {
+            height: 12mm;
+            margin-bottom: 1mm;
+        }
+
+        .carnet-numero {
+            font-size: 6pt;
+            text-align: center;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-4">
+                <h1 class="text-2xl font-bold">Carnet de {{ miembro }}</h1>
+                <div class="space-x-2">
+                    <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
+                    <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn btn-ghost">Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="carnet-container">
+        <div class="carnet">
+            <div class="carnet-header">CUERPO SANO</div>
+
+            <div class="carnet-content">
+                <div class="carnet-foto">
+                    {% if miembro.foto %}
+                    <img src="{{ miembro.foto.url }}" alt="Foto de {{ miembro }}">
+                    {% else %}
+                    <div style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 6pt;">
+                        SIN FOTO
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="carnet-info">
+                    <div>
+                        <div class="carnet-info-row">
+                            <span class="carnet-info-label">Nombre:</span>
+                            <span>{{ miembro.nombre }} {{ miembro.apellido }}</span>
+                        </div>
+                        <div class="carnet-info-row">
+                            <span class="carnet-info-label">DNI:</span>
+                            <span>{{ miembro.dni }}</span>
+                        </div>
+                        <div class="carnet-info-row">
+                            <span class="carnet-info-label">Tipo:</span>
+                            <span>{{ miembro.get_tipo_miembro_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="carnet-barcode">
+                        {% if carnet.codigo_barras_imagen %}
+                        <img src="{{ carnet.codigo_barras_imagen.url }}" alt="Código de barras">
+                        {% endif %}
+                        <div class="carnet-numero">{{ carnet.numero_carnet }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
