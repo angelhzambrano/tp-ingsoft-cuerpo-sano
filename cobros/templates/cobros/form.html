@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Cobro{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">Registrar Cobro</h1>
+
+    <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Membresía *</span>
+                    </label>
+                    {{ form.membresia }}
+                    {% if form.membresia.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.membresia.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Monto Base *</span>
+                    </label>
+                    {{ form.monto_base }}
+                    {% if form.monto_base.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.monto_base.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                    <label class="label">
+                        <span class="label-text-alt text-gray-500">Se aplicará descuento automático según tipo de miembro</span>
+                    </label>
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Forma de Pago *</span>
+                    </label>
+                    {{ form.forma_pago }}
+                    {% if form.forma_pago.errors %}
+                        <label class="label">
+                            <span class="label-text-alt text-error">{{ form.forma_pago.errors.0 }}</span>
+                        </label>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Observaciones</span>
+                    </label>
+                    {{ form.observaciones }}
+                </div>
+
+                <div class="alert alert-info">
+                    <div>
+                        <h4 class="font-semibold mb-2">Descuentos Automáticos:</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>👨‍🎓 Estudiante: 20%</li>
+                            <li>👴 Persona Mayor: 15%</li>
+                            <li>👤 Regular: 0%</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="flex gap-2 justify-end">
+                    <a href="{% url 'cobros:lista' %}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Registrar Cobro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 5/13 completado)
+**Status:** En construcción (Paso 6/13 completado)
 
 ---
 
@@ -440,6 +440,74 @@ fetch('/asistencia/api/barcode/', {
 
 ---
 
+## Paso 6: App Cobros (Descuento Automático + Comprobante)
+
+**Objetivo:** Registro de cobros con descuento automático según tipo de miembro
+
+### Qué se hizo
+
+1. **Modelos** (ya existían)
+   - `Cobro`: miembro (FK), membresia (FK), monto_base, descuento_porcentaje, monto_final, forma_pago (EFECTIVO/TARJETA/TRANSFERENCIA), fecha (auto_now_add), observaciones
+   - `Comprobante`: cobro (OneToOne), numero (AutoField PK), fecha_emision (auto_now_add)
+
+2. **Formulario (`forms.py`)**
+   - `CobroForm`: membresia (select ACTIVAS), monto_base, forma_pago, observaciones
+   - Validación: monto_base > 0
+
+3. **Lógica de Descuentos**
+   ```python
+   def calcular_descuento(miembro):
+       descuentos = {
+           'ESTUDIANTE': 20.00,
+           'MAYOR': 15.00,
+           'REGULAR': 0.00,
+       }
+       return descuentos.get(miembro.tipo_miembro, 0.00)
+   ```
+   - Se aplica automáticamente en POST
+   - monto_final = monto_base - (monto_base * descuento% / 100)
+
+4. **Vistas**
+   - `lista_cobros()` — Tabla con filtro por forma de pago
+   - `registrar_cobro()` — GET: formulario, POST: calcula descuento, crea Cobro + Comprobante
+   - `detalle_cobro()` — Card con info completa (miembro, membresía, montos, descuento)
+   - `ver_comprobante()` — Template imprimible
+
+5. **Templates**
+   - `lista.html` — Tabla: miembro, membresía, montos, forma pago, fecha
+   - `form.html` — Formulario con alerta explicando descuentos
+   - `detalle.html` — Card grid con: miembro, membresía, montos, forma pago
+   - `print.html` — Comprobante printable con logo, número de comprobante, detalle de descuento
+
+6. **URLs**
+   ```python
+   /cobros/                    # Listado
+   /cobros/nuevo/              # Crear
+   /cobros/<id>/               # Detalle
+   /cobros/<id>/comprobante/   # Imprimir
+   ```
+
+7. **Admin**
+   - CobroAdmin: list_display (miembro, membresia, montos, forma, fecha), filtros por forma y tipo_miembro
+   - ComprobanteAdmin: list_display (numero, cobro, fecha)
+
+### Cómo se hizo
+
+**Flujo de creación:**
+1. Usuario POST en `/cobros/nuevo/` con membresia, monto_base, forma_pago
+2. Vista calcula: `descuento = monto_base * (tipo_miembro_descuento / 100)`
+3. Calcula: `monto_final = monto_base - descuento`
+4. Crea Cobro con todos los campos
+5. Signal/manual crea Comprobante asociado
+6. Redirect a detalle
+
+**Validación:**
+- Solo membresías ACTIVAS disponibles en select
+- monto_base > 0
+- AutoField en Comprobante genera números secuenciales
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -448,6 +516,7 @@ fetch('/asistencia/api/barcode/', {
 - Paso 3: Miembros (CRUD + carnet + barcode)
 - Paso 4: Membresias (CRUD + tipos + auto-update de estado con django-q2)
 - Paso 5: Asistencia (Scanner HTML5 + registro por barcode + listado + validación de membresía)
+- Paso 6: Cobros (Descuento automático por tipo_miembro + comprobante printable)
 
 ### ⏳ Próximos pasos
 - Paso 6: App cobros (descuento automático + comprobante print)
@@ -543,15 +612,6 @@ cuerposano/
 ---
 
 ## Notas para próximos pasos
-
-### App Cobros
-- Descuento según tipo_miembro:
-  - ESTUDIANTE: 20%
-  - MAYOR: 15%
-  - REGULAR: 0%
-- Vista POST calcula descuento antes de crear Cobro
-- Comprobante auto-crea con número auto-incremental
-- Print con @media print similar a carnet
 
 ---
 

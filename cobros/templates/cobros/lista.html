@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Cobros{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">💰 Gestión de Cobros</h1>
+        <a href="{% url 'cobros:crear' %}" class="btn btn-primary">Nuevo Cobro</a>
+    </div>
+
+    <div class="card bg-base-100 shadow-md mb-6">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Filtros</h2>
+            <form method="get" class="flex gap-4 items-end">
+                <div class="form-control flex-1">
+                    <label class="label">
+                        <span class="label-text">Forma de Pago</span>
+                    </label>
+                    <select name="forma_pago" class="select select-bordered w-full">
+                        <option value="">-- Todas --</option>
+                        <option value="EFECTIVO" {% if forma_pago_selected == 'EFECTIVO' %}selected{% endif %}>Efectivo</option>
+                        <option value="TARJETA" {% if forma_pago_selected == 'TARJETA' %}selected{% endif %}>Tarjeta</option>
+                        <option value="TRANSFERENCIA" {% if forma_pago_selected == 'TRANSFERENCIA' %}selected{% endif %}>Transferencia</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-ghost">Filtrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        {% if cobros %}
+            <table class="table table-zebra w-full">
+                <thead>
+                    <tr>
+                        <th>Miembro</th>
+                        <th>Membresía</th>
+                        <th>Monto Base</th>
+                        <th>Descuento</th>
+                        <th>Monto Final</th>
+                        <th>Forma Pago</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cobro in cobros %}
+                        <tr>
+                            <td class="font-semibold">{{ cobro.miembro }}</td>
+                            <td>{{ cobro.membresia.tipo.nombre }}</td>
+                            <td>${{ cobro.monto_base }}</td>
+                            <td>{{ cobro.descuento_porcentaje }}%</td>
+                            <td class="font-bold text-lg">${{ cobro.monto_final }}</td>
+                            <td>
+                                {% if cobro.forma_pago == "EFECTIVO" %}
+                                    <span class="badge badge-success">💵 Efectivo</span>
+                                {% elif cobro.forma_pago == "TARJETA" %}
+                                    <span class="badge badge-info">💳 Tarjeta</span>
+                                {% else %}
+                                    <span class="badge badge-warning">🏦 Transferencia</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ cobro.fecha|date:"d/m/Y H:i" }}</td>
+                            <td class="space-x-2">
+                                <a href="{% url 'cobros:detalle' cobro.pk %}" class="btn btn-sm btn-ghost">Ver</a>
+                                <a href="{% url 'cobros:comprobante' cobro.pk %}" class="btn btn-sm btn-ghost">Imprimir</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <p>No hay cobros registrados.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-6 text-sm text-gray-600">
+        Total: <strong>{{ total }}</strong> cobro(s)
+    </div>
+</div>
+{% endblock %}

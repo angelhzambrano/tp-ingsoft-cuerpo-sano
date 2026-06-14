@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Comprobante de Pago{% endblock %}
+
+{% block content %}
+<style>
+    @media print {
+        .no-print {
+            display: none;
+        }
+        .comprobante {
+            page-break-after: avoid;
+        }
+    }
+</style>
+
+<div class="container mx-auto p-4">
+    <div class="no-print mb-6 space-x-2">
+        <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
+        <a href="{% url 'cobros:detalle' cobro.pk %}" class="btn btn-ghost">Volver</a>
+    </div>
+
+    <div class="comprobante max-w-2xl mx-auto bg-white p-8 border-2 border-gray-300">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold">CUERPO SANO</h1>
+            <p class="text-lg font-semibold">Comprobante de Pago</p>
+            <p class="text-gray-600">Comprobante #{{ comprobante.numero }}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8 text-sm">
+            <div>
+                <p class="text-gray-600 font-semibold">Miembro</p>
+                <p class="font-bold text-lg">{{ cobro.miembro }}</p>
+                <p class="text-gray-600">DNI: {{ cobro.miembro.dni }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-gray-600 font-semibold">Fecha</p>
+                <p class="font-bold text-lg">{{ cobro.fecha|date:"d/m/Y" }}</p>
+                <p class="text-gray-600">{{ cobro.fecha|date:"H:i" }} hs</p>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="mb-8">
+            <p class="text-gray-600 font-semibold text-sm mb-2">Membresía</p>
+            <p class="font-bold text-lg">{{ cobro.membresia.tipo.nombre }}</p>
+            <p class="text-gray-600 text-sm">Vigencia: {{ cobro.membresia.fecha_inicio|date:"d/m/Y" }} al {{ cobro.membresia.fecha_fin|date:"d/m/Y" }}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="space-y-3 mb-8">
+            <div class="flex justify-between">
+                <span>Monto Base:</span>
+                <span class="font-semibold">${{ cobro.monto_base }}</span>
+            </div>
+            {% if cobro.descuento_porcentaje > 0 %}
+                <div class="flex justify-between">
+                    <span>Descuento {{ cobro.miembro.get_tipo_miembro_display }} ({{ cobro.descuento_porcentaje }}%):</span>
+                    <span class="font-semibold text-success">-${% widthratio cobro.monto_base cobro.descuento_porcentaje 100 %}</span>
+                </div>
+            {% endif %}
+            <div class="divider my-0"></div>
+            <div class="flex justify-between text-lg">
+                <span class="font-bold">Total a Pagar:</span>
+                <span class="font-bold text-2xl">${{ cobro.monto_final }}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8 text-sm">
+            <div>
+                <p class="text-gray-600 font-semibold">Forma de Pago</p>
+                <p class="font-bold">{{ cobro.get_forma_pago_display }}</p>
+            </div>
+            <div>
+                <p class="text-gray-600 font-semibold">Tipo de Miembro</p>
+                <p class="font-bold">{{ cobro.miembro.get_tipo_miembro_display }}</p>
+            </div>
+        </div>
+
+        {% if cobro.observaciones %}
+            <div class="divider"></div>
+            <div class="mb-8">
+                <p class="text-gray-600 font-semibold text-sm">Observaciones</p>
+                <p>{{ cobro.observaciones }}</p>
+            </div>
+        {% endif %}
+
+        <div class="divider"></div>
+
+        <div class="text-center text-sm text-gray-600 space-y-1">
+            <p>Comprobante generado: {{ comprobante.fecha_emision|date:"d/m/Y H:i" }}</p>
+            <p>Comprobante #{{ comprobante.numero }}</p>
+            <p class="mt-4 font-semibold">Gracias por su compra</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
