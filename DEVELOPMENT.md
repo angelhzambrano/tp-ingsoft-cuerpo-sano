@@ -3,7 +3,7 @@
 Documento que registra el proceso de construcción de la aplicación Django **Cuerpo Sano** — Sistema de gestión de gimnasio.
 
 **Presentación:** Jueves 18 de junio de 2026  
-**Status:** En construcción (Paso 10/13 completado)
+**Status:** En construcción (Paso 11/13 completado)
 
 ---
 
@@ -824,6 +824,119 @@ def has_delete_permission(self, request, obj=None):
 
 ---
 
+## Paso 11: Tests (pytest-django + factory-boy)
+
+**Objetivo:** Suite de tests para validar lógica, modelos, vistas y signals
+
+### Qué se hizo
+
+1. **Configuración pytest**
+   - `pytest.ini`: settings Django, cobertura HTML/terminal, markers
+   - `conftest.py`: factories y fixtures reutilizables
+
+2. **Factories (conftest.py)**
+   - UserFactory, MiembroFactory, CarnetFactory
+   - TipoMembresiaFactory, MembresiaFactory
+   - CobroFactory, ActividadFactory, HorarioClaseFactory, InscripcionFactory
+   - EntrenadorFactory
+   - Fixtures: admin_user, recepcion_user, miembro, membresia, cobro, etc.
+
+3. **Test Files (33 casos)**
+
+   **test_miembros.py (7 casos)**
+   - ✅ Crear miembro con DNI único
+   - ✅ DNI debe ser único (IntegrityError)
+   - ✅ Representación string
+   - ✅ Carnet creado automáticamente (signal)
+   - ✅ Relación 1:1 Carnet-Miembro
+   - ✅ Lista requiere login
+   - ✅ Validación de formulario
+
+   **test_membresias.py (5 casos)**
+   - ✅ Crear membresía con fecha_fin calculada
+   - ✅ Estado vencida
+   - ✅ Crear tipo de membresía
+   - ✅ Representación string
+   - ✅ Múltiples membresías ACTIVAS por miembro (permitido)
+
+   **test_cobros.py (5 casos)**
+   - ✅ Crear cobro
+   - ✅ Formas de pago válidas (EFECTIVO/TARJETA/TRANSFERENCIA)
+   - ✅ Comprobante creación manual
+   - ✅ Representación string
+   - ✅ Número de comprobante autoincrement
+
+   **test_actividades.py (5 casos)**
+   - ✅ Crear actividad con capacidad
+   - ✅ Representación string
+   - ✅ Crear horario clase
+   - ✅ Inscripción rechazada si clase llena (ValidationError)
+   - ✅ Inscripción única por miembro-horario (unique_together)
+
+   **test_asistencia.py (5 casos)**
+   - ✅ Crear asistencia
+   - ✅ Asistencia manual
+   - ✅ Validar membresía ACTIVA requerida
+   - ✅ Validar miembro activo requerido
+   - ✅ Representación string
+
+   **test_historial.py (5 casos)**
+   - ✅ Crear miembro dispara AuditLog
+   - ✅ Crear cobro dispara AuditLog
+   - ✅ AuditLog captura usuario
+   - ✅ Representación string AuditLog
+   - ✅ AuditLog read-only (immutable)
+
+4. **Cobertura**
+   - 71% total de código
+   - 100% en test files
+   - Models: 92-97% (solo validaciones complejas sin cobertura)
+   - Views: 28-45% (requeriría más test de integración)
+
+### Cómo se hizo
+
+**Factory con relaciones:**
+```python
+class MembresiaFactory(DjangoModelFactory):
+    miembro = SubFactory(MiembroFactory)
+    tipo = SubFactory(TipoMembresiaFactory)
+```
+
+**Fixture reutilizable:**
+```python
+@pytest.fixture
+def miembro(db):
+    return MiembroFactory()
+```
+
+**Test con validación:**
+```python
+def test_inscripcion_capacidad_maxima(self):
+    # Setup
+    actividad = ActividadFactory(capacidad_maxima=2)
+    horario = HorarioClaseFactory(actividad=actividad)
+    miembro1, miembro2, miembro3 = MiembroFactory(), MiembroFactory(), MiembroFactory()
+    
+    InscripcionFactory(miembro=miembro1, horario=horario)
+    InscripcionFactory(miembro=miembro2, horario=horario)
+    
+    # Assert validation
+    with pytest.raises(ValidationError):
+        inscripcion = Inscripcion(miembro=miembro3, horario=horario)
+        inscripcion.save()
+```
+
+### Ejecución
+
+```bash
+pytest tests/ -v                    # Todos los tests
+pytest tests/test_miembros.py -v    # Un archivo
+pytest -k "capacidad"               # Por keyword
+pytest --cov=. --html=htmlcov       # Con cobertura HTML
+```
+
+---
+
 ## Estado Actual
 
 ### ✅ Completado
@@ -837,10 +950,10 @@ def has_delete_permission(self, request, obj=None):
 - Paso 8: Entrenadores (CRUD + asistencia de entrenador + reporte imprimible)
 - Paso 9: Reportes (3 vistas: asistencias, cobros, membresías vencidas con filtros)
 - Paso 10: Healthz (health check para Render) + Auditlog (historial de cambios en Miembro y Cobro)
+- Paso 11: Tests (pytest-django + factory-boy, 33 casos, 71% cobertura)
 
 ### ⏳ Próximos pasos
-- Paso 11: Tests (pytest-django + factory-boy)
-- Paso 12: Deploy (Render)
+- Paso 12: Deploy (Render, Procfile, env vars)
 - Paso 13: RF-11 biométrico (stub con WebSocket)
 
 ---
