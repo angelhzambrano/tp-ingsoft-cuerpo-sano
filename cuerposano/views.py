@@ -50,40 +50,49 @@ def custom_logout(request):
 @login_required
 def dashboard(request):
     """Dashboard principal según rol del usuario"""
-    context = {
-        'is_admin': request.user.groups.filter(name='Admin').exists(),
-        'is_recepcion': request.user.groups.filter(name='Recepcion').exists(),
-        'is_entrenador': request.user.groups.filter(name='Entrenador').exists(),
-        'is_miembro': request.user.groups.filter(name='Miembro').exists(),
-    }
-
-    if context['is_admin']:
-        context['stats'] = {
-            'miembros': Miembro.objects.count(),
-            'entrenadores': Entrenador.objects.count(),
-            'activos': Miembro.objects.filter(activo=True).count(),
+    try:
+        context = {
+            'is_admin': request.user.groups.filter(name='Admin').exists(),
+            'is_recepcion': request.user.groups.filter(name='Recepcion').exists(),
+            'is_entrenador': request.user.groups.filter(name='Entrenador').exists(),
+            'is_miembro': request.user.groups.filter(name='Miembro').exists(),
         }
-    elif context['is_entrenador']:
-        try:
-            entrenador = request.user.entrenador
-            context['entrenador'] = entrenador
-        except Entrenador.DoesNotExist:
-            context['sin_asignacion'] = True
-    elif context['is_miembro']:
-        try:
-            miembro = request.user.miembro
-            context['miembro'] = miembro
-            # Obtener membresía activa
-            membresia = Membresia.objects.filter(
-                miembro=miembro,
-                estado='ACTIVA',
-                fecha_fin__gte=timezone.now().date()
-            ).first()
-            context['membresia'] = membresia
-        except Miembro.DoesNotExist:
-            context['sin_asignacion'] = True
 
-    return render(request, 'dashboard.html', context)
+        if context['is_admin']:
+            context['stats'] = {
+                'miembros': Miembro.objects.count(),
+                'entrenadores': Entrenador.objects.count(),
+                'activos': Miembro.objects.filter(activo=True).count(),
+            }
+        elif context['is_entrenador']:
+            try:
+                entrenador = request.user.entrenador
+                context['entrenador'] = entrenador
+            except Entrenador.DoesNotExist:
+                context['sin_asignacion'] = True
+        elif context['is_miembro']:
+            try:
+                miembro = request.user.miembro
+                context['miembro'] = miembro
+                # Obtener membresía activa
+                membresia = Membresia.objects.filter(
+                    miembro=miembro,
+                    estado='ACTIVA',
+                    fecha_fin__gte=timezone.now().date()
+                ).first()
+                context['membresia'] = membresia
+            except Miembro.DoesNotExist:
+                context['sin_asignacion'] = True
+
+        return render(request, 'dashboard.html', context)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e),
+            'type': type(e).__name__,
+            'user': str(request.user),
+            'groups': list(request.user.groups.values_list('name', flat=True))
+        }, status=500)
 
 
 @login_required
