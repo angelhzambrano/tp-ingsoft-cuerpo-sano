@@ -2,7 +2,7 @@ services:
   - type: web
     name: cuerpo-sano
     runtime: python39
-    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py setup_users
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python setup_test_users.py
     startCommand: gunicorn cuerposano.wsgi:application
     envVars:
       - key: SECRET_KEY
