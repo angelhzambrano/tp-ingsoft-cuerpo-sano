@@ -2,10 +2,22 @@ from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.db import transaction
 from .models import Cobro, Comprobante
 from .forms import CobroForm
 from membresias.models import Membresia
+
+
+def require_admin_or_recepcion(view_func):
+    """Decorador que requiere ser Admin o Recepción"""
+    def wrapper(request, *args, **kwargs):
+        is_admin = request.user.groups.filter(name='Admin').exists()
+        is_recepcion = request.user.groups.filter(name='Recepcion').exists()
+        if not (is_admin or is_recepcion):
+            return HttpResponseForbidden('No tienes permiso para acceder a esta página')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 def calcular_descuento(miembro):
@@ -19,8 +31,9 @@ def calcular_descuento(miembro):
 
 
 @login_required
+@require_admin_or_recepcion
 def lista_cobros(request):
-    """Listado de cobros con filtros"""
+    """Listado de cobros con filtros - Admin y Recepción"""
     cobros = Cobro.objects.select_related('miembro', 'membresia', 'membresia__tipo').order_by('-fecha')
 
     # Filtro por forma de pago
@@ -37,8 +50,9 @@ def lista_cobros(request):
 
 
 @login_required
+@require_admin_or_recepcion
 def registrar_cobro(request):
-    """Registrar nuevo cobro con cálculo automático de descuento"""
+    """Registrar nuevo cobro - Admin y Recepción"""
     if request.method == 'POST':
         form = CobroForm(request.POST)
         if form.is_valid():
@@ -79,8 +93,9 @@ def registrar_cobro(request):
 
 
 @login_required
+@require_admin_or_recepcion
 def detalle_cobro(request, pk):
-    """Detalle de un cobro"""
+    """Detalle de un cobro - Admin y Recepción"""
     cobro = get_object_or_404(Cobro, pk=pk)
     comprobante = cobro.comprobante if hasattr(cobro, 'comprobante') else None
     context = {
@@ -91,8 +106,9 @@ def detalle_cobro(request, pk):
 
 
 @login_required
+@require_admin_or_recepcion
 def ver_comprobante(request, pk):
-    """Comprobante printable"""
+    """Comprobante printable - Admin y Recepción"""
     cobro = get_object_or_404(Cobro, pk=pk)
     comprobante = get_object_or_404(Comprobante, cobro=cobro)
     context = {
