@@ -9,7 +9,6 @@
         <h1 class="text-4xl font-bold text-gray-800">
             {% if is_admin %}⚙️ Dashboard Admin{% elif is_recepcion %}🎫 Recepción{% elif is_entrenador %}🏋️ Entrenador{% elif is_miembro %}👤 Mi Dashboard{% endif %}
         </h1>
-        <p class="text-gray-600 mt-2">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
     </div>
 
     {% if sin_asignacion %}
