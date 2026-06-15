@@ -11,7 +11,55 @@
             nav, .no-print { display: none !important; }
             body { font-size: 12pt; }
         }
+
+        /* Navbar links - High contrast */
+        nav a {
+            color: #ffffff !important;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Dropdown toggle - Click based */
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownBtn = document.getElementById('dropdown-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+
+            if (dropdownBtn && dropdownMenu) {
+                // Toggle dropdown on button click
+                dropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('[data-dropdown-container]')) {
+                        dropdownMenu.classList.remove('active');
+                    }
+                });
+
+                // Prevent closing when clicking inside dropdown
+                dropdownMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+    </script>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -49,15 +97,15 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <div class="relative group">
-                        <button class="w-10 h-10 rounded-full bg-white text-primary font-bold text-center text-sm hover:opacity-90 transition">
+                    <div class="relative" data-dropdown-container>
+                        <button id="dropdown-btn" class="w-10 h-10 rounded-full bg-white text-primary font-bold text-center text-sm hover:opacity-90 transition cursor-pointer">
                             {{ user.username|first|upper }}
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white text-dark rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition z-50">
+                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white text-dark rounded-lg shadow-lg z-50">
                             {% if user.is_staff %}
-                            <a href="{% url 'admin:index' %}" class="block px-4 py-2 hover:bg-light rounded-t-lg">⚙️ Admin</a>
+                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-light rounded-t-lg border-b border-neutral-100">⚙️ Admin</a>
                             {% endif %}
-                            <a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-light rounded-b-lg">🚪 Cerrar sesión</a>
+                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-light {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg">🚪 Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
