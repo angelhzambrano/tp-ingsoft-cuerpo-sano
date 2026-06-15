@@ -9,6 +9,11 @@ from entrenadores.models import Entrenador
 from membresias.models import Membresia
 
 
+def ping(request):
+    """Ultra simple health check - no DB access"""
+    return JsonResponse({'status': 'alive', 'message': 'WSGI is running'})
+
+
 def healthz(request):
     try:
         with connection.cursor() as cursor:
