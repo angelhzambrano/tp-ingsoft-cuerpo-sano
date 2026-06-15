@@ -24,20 +24,37 @@
 
 ---
 
-### 2. Demostración Técnica (12 min)
+### 2. Demostración Técnica (14 min)
 
-#### 🔐 Paso 1: Login (1 min)
+#### 🔐 Paso 1: Login como MIEMBRO (2 min)
 **Mostrar:**
 - Interfaz moderna con gradiente azul
-- Validación de credenciales
-- Usuario: `admin` / `admin123`
+- Usuario: `juan_miembro` / `123456`
+- Login exitoso
+
+**Señalar en navbar:**
+- Badge "MIEMBRO" claramente visible
+- Solo 2 opciones: "Mi Asistencia" y "Actividades"
+- Nombre del usuario (Juan Pérez)
 
 ```
-"La interfaz está diseñada para ser intuitiva.
-Usamos DaisyUI para una experiencia moderna y limpia."
+"El sistema diferencia claramente entre roles.
+Cada usuario ve solo lo que necesita según su rol."
 ```
 
-#### 👥 Paso 2: Dashboard de Miembros (2 min)
+#### 📱 Paso 2: Mi Asistencia (como MIEMBRO) (2 min)
+**Mostrar:**
+- Datos personales del miembro
+- Membresía activa (Plan Mensual, vigencia, precio)
+- Historial de asistencias personal
+- Stat cards: Total, Código, Manual
+
+```
+"Los miembros pueden ver su propia asistencia.
+Saben cuándo vinieron, por qué método, y el estado de su membresía."
+```
+
+#### 👥 Paso 3: Dashboard de Miembros (2 min)
 **Mostrar:**
 - Tabla de 4 miembros de prueba
 - Colores diferenciados por tipo (Regular/Estudiante/VIP)
@@ -54,10 +71,17 @@ Cada miembro obtiene un carnet único con código de barras."
 - ✅ Carnet con código de barras
 - ✅ Membresía automática
 
-#### 📱 Paso 3: Lector Biométrico (3 min)
+#### 🔐 Paso 4: Login como ADMIN (0.5 min)
 **Mostrar:**
-- Interfaz del lector
-- Escanear código de barras (CS-00001)
+- Logout desde MIEMBRO (logout button)
+- Login con: `admin` / `admin123`
+- Badge "ADMIN" en navbar
+- Opciones completas (Miembros, Membresías, Asistencia, Actividades, Cobros, Reportes)
+
+#### 📱 Paso 5: Lector Biométrico (3 min)
+**Mostrar:**
+- Interfaz del lector biométrico
+- Escanear código de barras (CS-00001 o CS-TEST001)
 - Confirmación automática con nombre del miembro
 
 ```
@@ -70,7 +94,7 @@ Cuando un miembro llega, escanea su carnet y la asistencia se registra automáti
 - 📊 Asistencias se cuentan automáticamente
 - 🔄 Compatible con lectores USB estándar
 
-#### 📊 Paso 4: Reportes y Gráficos (4 min)
+#### 📊 Paso 6: Reportes y Gráficos (3.5 min)
 **Mostrar:**
 - 4 stat cards coloridas:
   - 📍 Total Asistencias
@@ -94,7 +118,7 @@ No necesita esperar - ve los datos mientras sucede."
 - Miembro específico
 - Método de registro
 
-#### 📥 Paso 5: Excel Export (2 min)
+#### 📥 Paso 7: Excel Export (1 min)
 **Mostrar:**
 - Click en botón "📊 Descargar Excel"
 - Archivo descargado con:
@@ -164,11 +188,16 @@ Infraestructura:
 - [x] UI/UX moderno y responsive
 - [x] Documentación completa para staff
 - [x] Datos de prueba automáticos
+- [x] Rol MIEMBRO con asistencia personal
+- [x] Rol ENTRENADOR con asistencia de trabajo
+- [x] Navbars diferenciadas por rol
+- [x] Control de acceso por rol (RBAC)
 
 **📊 Números:**
-- 🎯 6 modelos de base de datos
-- 🛣️ 20+ rutas/endpoints
-- 📄 15 templates HTML
+- 🎯 7 modelos de base de datos (incluyendo Miembro y Entrenador)
+- 🛣️ 25+ rutas/endpoints
+- 📄 20 templates HTML (responsive)
+- 👥 4 roles diferenciados (Admin, Recepción, Entrenador, Miembro)
 - 🧪 Testeado end-to-end
 - 📈 0% downtime en producción
 
@@ -196,27 +225,42 @@ Está listo para usar con reales usuarios del gimnasio."
 1. Abrir navegador: https://cuerpo-sano.onrender.com
    (O localhost:8000 si es local)
 
-2. Login con: admin / admin123
+2. LOGIN COMO MIEMBRO
+   Usuario: juan_miembro / 123456
+   → Mostrar navbar diferenciado (badge "MIEMBRO")
+   → Solo 2 opciones de menú
 
-3. Mostrar Miembros
-   → Explicar tipos de miembro
+3. Ir a "Mi Asistencia" (como Miembro)
+   → Ver datos personales
+   → Ver membresía activa
+   → Ver historial personal (vacío si es la 1era vez)
+   → EXPLICAR: "Así ven los clientes su asistencia"
+
+4. LOGOUT y LOGIN COMO ADMIN
+   Usuario: admin / admin123
+   → Mostrar navbar diferenciado (badge "ADMIN")
+   → 6 opciones de menú completas
+
+5. Ir a "Miembros"
+   → Tabla con 5 miembros de prueba
+   → Explicar tipos de miembro (Regular, Estudiante)
    → Señalar carnet con código de barras
 
-4. Ir a Asistencia → Lector Biométrico
-   → Simular escaneo de código de barras
-   → Mostrar confirmación
+6. Ir a "Asistencia" → "Lector Biométrico"
+   → Simular escaneo: escribir CS-00001 o CS-TEST001
+   → Mostrar confirmación automática
 
-5. Ir a Reportes
-   → Mostrar stat cards coloridas
-   → Mostrar gráficos interactivos
+7. Ir a "Reportes"
+   → Mostrar 4 stat cards coloridas
+   → Mostrar gráficos interactivos (doughnut + bar)
    → Aplicar filtro de fechas
    → Descargar Excel
 
-6. Mostrar código en GitHub
-   → Explicar estructura
-   → Mencionar pull requests / commits
+8. (Bonus) Mostrar código en GitHub
+   → Explicar estructura MVC
+   → Mencionar migrations y models
 
-7. Preguntas y respuestas
+9. Preguntas y respuestas
 ```
 
 ---
@@ -307,18 +351,21 @@ Python 3.13 | Chart.js | DaisyUI
 
 ---
 
-## ⏱️ Timeline (15 min exactos)
+## ⏱️ Timeline (20 min exactos)
 
 | Tiempo | Sección | Duración |
 |--------|---------|----------|
 | 0:00 | Introducción | 2 min |
-| 2:00 | Login | 1 min |
-| 3:00 | Miembros | 2 min |
-| 5:00 | Lector Biométrico | 3 min |
-| 8:00 | Reportes | 4 min |
-| 12:00 | Excel Export | 2 min |
-| 14:00 | Conclusión | 1 min |
-| 15:00 | Preguntas | FIN |
+| 2:00 | Login como MIEMBRO | 2 min |
+| 4:00 | Mi Asistencia (MIEMBRO) | 2 min |
+| 6:00 | Login como ADMIN | 1 min |
+| 7:00 | Miembros (ADMIN view) | 2 min |
+| 9:00 | Lector Biométrico | 3 min |
+| 12:00 | Reportes | 3.5 min |
+| 15:30 | Excel Export | 1 min |
+| 16:30 | Conclusión | 1 min |
+| 17:30 | Bonus: GitHub | 1.5 min |
+| 19:00 | Preguntas | FIN |
 
 ---
 
@@ -336,16 +383,21 @@ Python 3.13 | Chart.js | DaisyUI
 
 ## 📝 Checklist Pre-Presentación
 
-- [ ] Cargar página en navegador
+- [ ] Cargar https://cuerpo-sano.onrender.com en navegador
 - [ ] Verificar que Render está online (o servidor local levantado)
-- [ ] Tener datos de prueba cargados
-- [ ] Probar lector biométrico (o simular)
+- [ ] Tener datos de prueba cargados (5 miembros + 1 entrenador)
+- [ ] Verificar login MIEMBRO funciona (juan_miembro / 123456)
+- [ ] Verificar login ADMIN funciona (admin / admin123)
+- [ ] Probar lector biométrico (escanear CS-TEST001)
 - [ ] Verificar gráficos cargan correctamente
+- [ ] Tener README.md visible (referencia rápida)
 - [ ] Tener GitHub abierto para mostrar código
-- [ ] Tener README visible
 - [ ] Preparar respuestas a preguntas comunes
 - [ ] Hacer test de conexión/internet
 - [ ] Tener backup: screenshots si hay problemas de conexión
+- [ ] Verificar navbar muestra rol correcto por cada usuario
+- [ ] Probar Mi Asistencia como Miembro
+- [ ] Probar Mi Asistencia como Entrenador (si necesario)
 
 ---
 
