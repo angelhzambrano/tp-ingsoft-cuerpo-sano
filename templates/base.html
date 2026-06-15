@@ -118,11 +118,11 @@
                         <button id="dropdown-btn" class="w-10 h-10 rounded-full bg-white text-primary font-bold text-center text-sm hover:opacity-90 transition cursor-pointer">
                             {{ user.username|first|upper }}
                         </button>
-                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white text-dark rounded-lg shadow-lg z-50">
+                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
                             {% if user.is_staff %}
-                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-gray-50 rounded-t-lg border-b border-neutral-200 text-dark font-medium transition">⚙️ Admin</a>
+                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-gray-100 rounded-t-lg border-b border-neutral-200 transition" style="color: #1F2937; font-weight: 600; text-decoration: none;">⚙️ Admin</a>
                             {% endif %}
-                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-gray-50 {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg text-dark font-medium transition">🚪 Cerrar sesión</a>
+                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-gray-100 {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg transition" style="color: #1F2937; font-weight: 600; text-decoration: none;">🚪 Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
