@@ -10,7 +10,7 @@
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-        <div class="alert alert-error">
+        <div class="alert alert-danger">
             <div>
                 {% for error in form.non_field_errors %}
                 {{ error }}
@@ -122,10 +122,10 @@
 
         <!-- Botones -->
         <div class="flex gap-2">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">
                 {% if miembro %}Guardar cambios{% else %}Crear miembro{% endif %}
             </button>
-            <a href="{% url 'miembros:lista' %}" class="btn btn-ghost">Cancelar</a>
+            <a href="{% url 'miembros:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Cancelar</a>
         </div>
     </form>
 </div>

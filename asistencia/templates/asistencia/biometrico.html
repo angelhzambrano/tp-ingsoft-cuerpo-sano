@@ -35,7 +35,7 @@
 
                 <!-- Último registro -->
                 <div id="last-scan" class="mt-6 p-4 bg-base-200 rounded-lg hidden">
-                    <p class="text-sm text-gray-600">Último escaneo:</p>
+                    <p class="text-sm text-gray">Último escaneo:</p>
                     <p id="scan-text" class="text-xl font-bold text-success"></p>
                     <p id="scan-time" class="text-sm text-gray-500"></p>
                 </div>
@@ -60,7 +60,7 @@
 
     <!-- Botones de acción -->
     <div class="mt-8 flex gap-4 justify-center">
-        <a href="{% url 'asistencia:manual' %}" class="btn btn-outline btn-primary">
+        <a href="{% url 'asistencia:manual' %}" class="btn-secondary px-4 py-2 rounded-md hover:opacity-90">
             ➕ Registro Manual
         </a>
         <a href="{% url 'asistencia:listado' %}" class="btn btn-outline btn-secondary">

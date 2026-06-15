@@ -6,8 +6,8 @@
 <div class="container mx-auto px-4 py-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">📋 Mi Asistencia</h1>
-        <p class="text-gray-600 text-sm mt-1">Historial personal como entrenador</p>
+        <h1 class="text-4xl font-bold text-dark">📋 Mi Asistencia</h1>
+        <p class="text-gray text-sm mt-1">Historial personal como entrenador</p>
     </div>
 
     <!-- Entrenador Info -->
@@ -16,13 +16,13 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-sm font-semibold text-indigo-600">ENTRENADOR</p>
-                    <h2 class="text-2xl font-bold text-gray-900">{{ entrenador.nombre }} {{ entrenador.apellido }}</h2>
-                    <p class="text-gray-600 mt-2">📌 {{ entrenador.especialidad }}</p>
+                    <h2 class="text-2xl font-bold text-dark">{{ entrenador.nombre }} {{ entrenador.apellido }}</h2>
+                    <p class="text-gray mt-2">📌 {{ entrenador.especialidad }}</p>
                     {% if entrenador.email %}
-                    <p class="text-gray-600">📧 {{ entrenador.email }}</p>
+                    <p class="text-gray">📧 {{ entrenador.email }}</p>
                     {% endif %}
                     {% if entrenador.telefono %}
-                    <p class="text-gray-600">☎️ {{ entrenador.telefono }}</p>
+                    <p class="text-gray">☎️ {{ entrenador.telefono }}</p>
                     {% endif %}
                 </div>
                 <div>
@@ -96,7 +96,7 @@
     <!-- Tabla de Asistencias -->
     <div class="card bg-white shadow-lg border border-gray-100 rounded-xl">
         <div class="card-body p-6">
-            <h2 class="card-title text-lg text-gray-800 mb-4">📋 Historial de Asistencias</h2>
+            <h2 class="card-title text-lg text-dark mb-4">📋 Historial de Asistencias</h2>
 
             {% if asistencias %}
                 <div class="overflow-x-auto">
@@ -112,8 +112,8 @@
                         <tbody class="divide-y divide-gray-200">
                             {% for asistencia in asistencias|slice:":50" %}
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="font-medium text-gray-900">{{ asistencia.fecha|date:"d/m/Y" }}</td>
-                                    <td class="text-gray-700">{{ asistencia.horario.clase.nombre }}</td>
+                                    <td class="font-medium text-dark">{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                                    <td class="text-dark-secondary">{{ asistencia.horario.clase.nombre }}</td>
                                     <td>
                                         {% if asistencia.tipo == 'PRESENTE' %}
                                             <span class="badge badge-success text-white">✓ Presente</span>
@@ -124,7 +124,7 @@
                                             <span class="badge badge-info text-white">Justificada</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-gray-600 text-xs">{{ asistencia.observaciones|truncatewords:10 }}</td>
+                                    <td class="text-gray text-xs">{{ asistencia.observaciones|truncatewords:10 }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -137,7 +137,7 @@
                 {% endif %}
             {% else %}
                 <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                    <p class="text-gray-600 font-semibold">ℹ️ No hay registros de asistencia aún</p>
+                    <p class="text-gray font-semibold">ℹ️ No hay registros de asistencia aún</p>
                     <p class="text-gray-500 text-sm mt-2">Cuando se registren tus asistencias, aparecerán aquí</p>
                 </div>
             {% endif %}
@@ -146,7 +146,7 @@
 
     <!-- Botón Volver -->
     <div class="mt-6 text-center">
-        <a href="{% url 'actividades:lista' %}" class="btn btn-outline btn-primary">
+        <a href="{% url 'actividades:lista' %}" class="btn-secondary px-4 py-2 rounded-md hover:opacity-90">
             ⬅️ Volver a Actividades
         </a>
     </div>

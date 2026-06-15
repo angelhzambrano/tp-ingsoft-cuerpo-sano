@@ -6,47 +6,47 @@
 <div class="container mx-auto p-4 max-w-4xl">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">{{ entrenador.nombre }} {{ entrenador.apellido }}</h1>
-        <a href="{% url 'entrenadores:lista' %}" class="btn btn-ghost">Volver</a>
+        <a href="{% url 'entrenadores:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div class="card bg-base-100 shadow-md">
+        <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-lg">Información Personal</h2>
 
                 <div class="space-y-3">
                     <div>
-                        <p class="text-gray-600 text-sm">Especialidad</p>
+                        <p class="text-gray text-sm">Especialidad</p>
                         <p class="font-semibold">{{ entrenador.especialidad }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Teléfono</p>
+                        <p class="text-gray text-sm">Teléfono</p>
                         <p class="font-semibold">{{ entrenador.telefono|default:"N/A" }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Email</p>
+                        <p class="text-gray text-sm">Email</p>
                         <p class="font-semibold">{{ entrenador.email|default:"N/A" }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Estado</p>
+                        <p class="text-gray text-sm">Estado</p>
                         <p>
                             {% if entrenador.activo %}
                                 <span class="badge badge-success">Activo</span>
                             {% else %}
-                                <span class="badge badge-error">Inactivo</span>
+                                <span class="badge badge-danger">Inactivo</span>
                             {% endif %}
                         </p>
                     </div>
                 </div>
 
                 <div class="card-actions justify-end mt-4">
-                    <a href="{% url 'entrenadores:editar' entrenador.pk %}" class="btn btn-sm btn-primary">Editar</a>
-                    <a href="{% url 'entrenadores:print' entrenador.pk %}" class="btn btn-sm btn-ghost" target="_blank">Imprimir</a>
+                    <a href="{% url 'entrenadores:editar' entrenador.pk %}" class="btn-primary px-2 py-1 rounded-md font-semibold text-white text-sm hover:opacity-90">Editar</a>
+                    <a href="{% url 'entrenadores:print' entrenador.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90" target="_blank">Imprimir</a>
                 </div>
             </div>
         </div>
 
-        <div class="card bg-base-100 shadow-md">
+        <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-lg">Estadísticas</h2>
 
@@ -62,13 +62,13 @@
                 </div>
 
                 <div class="card-actions justify-end mt-4">
-                    <a href="{% url 'entrenadores:historial_asistencias' entrenador.pk %}" class="btn btn-sm btn-ghost">Ver Historial</a>
+                    <a href="{% url 'entrenadores:historial_asistencias' entrenador.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Ver Historial</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="card">
         <div class="card-body">
             <h2 class="card-title mb-4">Últimas Asistencias</h2>
 
@@ -92,7 +92,7 @@
                                         {% if asistencia.tipo == 'PRESENTE' %}
                                             <span class="badge badge-success">Presente</span>
                                         {% else %}
-                                            <span class="badge badge-error">Ausente</span>
+                                            <span class="badge badge-danger">Ausente</span>
                                         {% endif %}
                                     </td>
                                     <td>

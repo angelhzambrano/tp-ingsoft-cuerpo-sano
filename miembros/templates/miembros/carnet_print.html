@@ -116,8 +116,8 @@
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">Carnet de {{ miembro }}</h1>
                 <div class="space-x-2">
-                    <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
-                    <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn btn-ghost">Volver</a>
+                    <button onclick="window.print()" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Imprimir</button>
+                    <a href="{% url 'miembros:detalle' miembro.pk %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
                 </div>
             </div>
         </div>

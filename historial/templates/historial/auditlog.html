@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="card">
         <div class="card-body">
             <h2 class="card-title mb-4">Eventos de Auditoría</h2>
 
@@ -80,7 +80,7 @@
                                         {% elif log.accion == 'UPDATE' %}
                                             <span class="badge badge-info">{{ log.get_accion_display }}</span>
                                         {% else %}
-                                            <span class="badge badge-error">{{ log.get_accion_display }}</span>
+                                            <span class="badge badge-danger">{{ log.get_accion_display }}</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ log.descripcion }}</td>

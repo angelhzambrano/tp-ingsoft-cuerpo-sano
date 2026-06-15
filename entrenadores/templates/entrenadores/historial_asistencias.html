@@ -6,7 +6,7 @@
 <div class="container mx-auto p-4 max-w-4xl">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Asistencias de {{ entrenador }}</h1>
-        <a href="{% url 'entrenadores:detalle' entrenador.pk %}" class="btn btn-ghost">Volver</a>
+        <a href="{% url 'entrenadores:detalle' entrenador.pk %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
     </div>
 
     <div class="grid grid-cols-4 gap-4 mb-6">
@@ -28,11 +28,11 @@
         </div>
     </div>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="card">
         <div class="card-body">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="card-title">Historial de Asistencias</h2>
-                <a href="{% url 'entrenadores:registrar_asistencia' %}" class="btn btn-sm btn-primary">+ Registrar</a>
+                <a href="{% url 'entrenadores:registrar_asistencia' %}" class="btn-primary px-2 py-1 rounded-md font-semibold text-white text-sm hover:opacity-90">+ Registrar</a>
             </div>
 
             {% if asistencias %}
@@ -61,7 +61,7 @@
                                         {% if asistencia.tipo == 'PRESENTE' %}
                                             <span class="badge badge-success">Presente</span>
                                         {% else %}
-                                            <span class="badge badge-error">Ausente</span>
+                                            <span class="badge badge-danger">Ausente</span>
                                         {% endif %}
                                     </td>
                                     <td>

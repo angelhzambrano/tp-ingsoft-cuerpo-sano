@@ -8,7 +8,7 @@
         {% if actividad %}Editar Actividad{% else %}Nueva Actividad{% endif %}
     </h1>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="card">
         <div class="card-body">
             <form method="post" class="space-y-4">
                 {% csrf_token %}
@@ -44,11 +44,11 @@
                     {% endif %}
                 </div>
 
-                <div class="divider"></div>
+                <div class="border-t border-neutral-200 my-4"></div>
 
                 <div class="flex gap-2 justify-end">
-                    <a href="{% url 'actividades:lista' %}" class="btn btn-ghost">Cancelar</a>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="{% url 'actividades:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Cancelar</a>
+                    <button type="submit" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Guardar</button>
                 </div>
             </form>
         </div>

@@ -8,37 +8,37 @@
         <h1 class="text-3xl font-bold">Membresía</h1>
         <div class="space-x-2">
             {% if membresia.estado == "ACTIVA" %}
-                <a href="{% url 'membresias:editar' membresia.pk %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'membresias:editar' membresia.pk %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Editar</a>
             {% endif %}
-            <a href="{% url 'membresias:print' membresia.pk %}" class="btn btn-secondary">Imprimir</a>
-            <a href="{% url 'membresias:lista' %}" class="btn btn-ghost">Volver</a>
+            <a href="{% url 'membresias:print' membresia.pk %}" class="btn-secondary px-4 py-2 rounded-md font-semibold hover:opacity-90">Imprimir</a>
+            <a href="{% url 'membresias:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-            <div class="card bg-base-100 shadow-md">
+            <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-lg">Información General</h2>
 
                     <div class="space-y-3">
                         <div>
-                            <p class="text-gray-600 text-sm">Miembro</p>
+                            <p class="text-gray text-sm">Miembro</p>
                             <p class="font-semibold">{{ membresia.miembro }}</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">DNI</p>
+                            <p class="text-gray text-sm">DNI</p>
                             <p class="font-semibold">{{ membresia.miembro.dni }}</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">Tipo de Membresía</p>
+                            <p class="text-gray text-sm">Tipo de Membresía</p>
                             <p class="font-semibold">{{ membresia.tipo.nombre }}</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">Precio</p>
+                            <p class="text-gray text-sm">Precio</p>
                             <p class="font-semibold text-lg">${{ membresia.tipo.precio }}</p>
                         </div>
                     </div>
@@ -47,28 +47,28 @@
         </div>
 
         <div>
-            <div class="card bg-base-100 shadow-md">
+            <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-lg">Fechas y Estado</h2>
 
                     <div class="space-y-3">
                         <div>
-                            <p class="text-gray-600 text-sm">Fecha de Inicio</p>
+                            <p class="text-gray text-sm">Fecha de Inicio</p>
                             <p class="font-semibold">{{ membresia.fecha_inicio|date:"d/m/Y" }}</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">Fecha de Vencimiento</p>
+                            <p class="text-gray text-sm">Fecha de Vencimiento</p>
                             <p class="font-semibold">{{ membresia.fecha_fin|date:"d/m/Y" }}</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">Duración</p>
+                            <p class="text-gray text-sm">Duración</p>
                             <p class="font-semibold">{{ membresia.tipo.duracion_dias }} días</p>
                         </div>
 
                         <div>
-                            <p class="text-gray-600 text-sm">Estado</p>
+                            <p class="text-gray text-sm">Estado</p>
                             <div class="mt-1">
                                 {% if membresia.estado == "ACTIVA" %}
                                     <span class="badge badge-success badge-lg">ACTIVA</span>

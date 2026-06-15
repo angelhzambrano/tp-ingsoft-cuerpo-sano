@@ -19,32 +19,32 @@
 
     <div class="card bg-white shadow-lg border border-gray-100 rounded-xl mb-6">
         <div class="card-body p-6">
-            <h2 class="card-title text-lg text-gray-800 mb-4">🔍 Filtros</h2>
+            <h2 class="card-title text-lg text-dark mb-4">🔍 Filtros</h2>
             <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div class="form-control">
                     <label class="label pb-2">
-                        <span class="label-text font-semibold text-gray-700">📅 Fecha Inicio</span>
+                        <span class="label-text font-semibold text-dark-secondary">📅 Fecha Inicio</span>
                     </label>
                     {{ form.fecha_inicio }}
                 </div>
 
                 <div class="form-control">
                     <label class="label pb-2">
-                        <span class="label-text font-semibold text-gray-700">📅 Fecha Fin</span>
+                        <span class="label-text font-semibold text-dark-secondary">📅 Fecha Fin</span>
                     </label>
                     {{ form.fecha_fin }}
                 </div>
 
                 <div class="form-control">
                     <label class="label pb-2">
-                        <span class="label-text font-semibold text-gray-700">👤 Miembro</span>
+                        <span class="label-text font-semibold text-dark-secondary">👤 Miembro</span>
                     </label>
                     {{ form.miembro }}
                 </div>
 
                 <div class="form-control">
                     <label class="label pb-2">
-                        <span class="label-text font-semibold text-gray-700">📍 Método</span>
+                        <span class="label-text font-semibold text-dark-secondary">📍 Método</span>
                     </label>
                     {{ form.metodo }}
                 </div>
@@ -120,7 +120,7 @@
         <!-- Gráfico de métodos -->
         <div class="card bg-white shadow-lg border border-gray-100 rounded-xl">
             <div class="card-body p-6">
-                <h3 class="card-title text-lg text-gray-800 mb-4">📊 Asistencias por Método</h3>
+                <h3 class="card-title text-lg text-dark mb-4">📊 Asistencias por Método</h3>
                 <div style="height: 250px;" class="mb-6">
                     <canvas id="metodosChart"></canvas>
                 </div>
@@ -128,16 +128,16 @@
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">🔵</span>
-                            <span class="font-semibold text-gray-700">Código Barras</span>
+                            <span class="font-semibold text-dark-secondary">Código Barras</span>
                         </div>
                         <span class="badge badge-lg badge-info text-white">{{ stats.por_metodo.BARCODE }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">✏️</span>
-                            <span class="font-semibold text-gray-700">Manual</span>
+                            <span class="font-semibold text-dark-secondary">Manual</span>
                         </div>
-                        <span class="badge badge-lg badge-warning text-gray-900">{{ stats.por_metodo.MANUAL }}</span>
+                        <span class="badge badge-lg badge-warning text-dark">{{ stats.por_metodo.MANUAL }}</span>
                     </div>
                 </div>
             </div>
@@ -146,7 +146,7 @@
         <!-- Top 5 Miembros -->
         <div class="card bg-white shadow-lg border border-gray-100 rounded-xl">
             <div class="card-body p-6">
-                <h3 class="card-title text-lg text-gray-800 mb-4">🏆 Top 5 Miembros</h3>
+                <h3 class="card-title text-lg text-dark mb-4">🏆 Top 5 Miembros</h3>
                 <div class="space-y-3">
                     {% for miembro, count in stats.top_miembros %}
                     <div class="flex justify-between items-center p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-100">
@@ -154,7 +154,7 @@
                             <span class="text-2xl">
                                 {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}⭐{% endif %}
                             </span>
-                            <span class="font-semibold text-gray-800">{{ miembro }}</span>
+                            <span class="font-semibold text-dark">{{ miembro }}</span>
                         </div>
                         <span class="badge badge-lg badge-primary text-white font-bold">{{ count }}</span>
                     </div>
@@ -176,42 +176,42 @@
 
     <div class="card bg-white shadow-lg border border-gray-100 rounded-xl">
         <div class="card-body p-6">
-            <h2 class="card-title text-lg text-gray-800 mb-4">📋 Detalle de Asistencias</h2>
+            <h2 class="card-title text-lg text-dark mb-4">📋 Detalle de Asistencias</h2>
 
             {% if asistencias %}
                 <div class="overflow-x-auto">
                     <table class="table w-full text-sm">
                         <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
                             <tr>
-                                <th class="font-bold text-gray-700">📅 Fecha</th>
-                                <th class="font-bold text-gray-700">🕐 Hora</th>
-                                <th class="font-bold text-gray-700">👤 Miembro</th>
-                                <th class="font-bold text-gray-700">🆔 DNI</th>
-                                <th class="font-bold text-gray-700">📌 Tipo</th>
-                                <th class="font-bold text-gray-700">📍 Método</th>
+                                <th class="font-bold text-dark-secondary">📅 Fecha</th>
+                                <th class="font-bold text-dark-secondary">🕐 Hora</th>
+                                <th class="font-bold text-dark-secondary">👤 Miembro</th>
+                                <th class="font-bold text-dark-secondary">🆔 DNI</th>
+                                <th class="font-bold text-dark-secondary">📌 Tipo</th>
+                                <th class="font-bold text-dark-secondary">📍 Método</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             {% for asistencia in asistencias|slice:":50" %}
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="font-medium text-gray-900">{{ asistencia.fecha|date:"d/m/Y" }}</td>
-                                    <td class="text-gray-700">{{ asistencia.hora|time:"H:i" }}</td>
-                                    <td class="font-semibold text-gray-900">{{ asistencia.miembro }}</td>
-                                    <td class="font-mono text-gray-700">{{ asistencia.miembro.dni }}</td>
+                                    <td class="font-medium text-dark">{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                                    <td class="text-dark-secondary">{{ asistencia.hora|time:"H:i" }}</td>
+                                    <td class="font-semibold text-dark">{{ asistencia.miembro }}</td>
+                                    <td class="font-mono text-dark-secondary">{{ asistencia.miembro.dni }}</td>
                                     <td>
                                         {% if asistencia.miembro.tipo_miembro == 'REGULAR' %}
                                             <span class="badge badge-sm badge-info text-white">Regular</span>
                                         {% elif asistencia.miembro.tipo_miembro == 'ESTUDIANTE' %}
                                             <span class="badge badge-sm badge-success text-white">Estudiante</span>
                                         {% else %}
-                                            <span class="badge badge-sm badge-warning text-gray-900">VIP</span>
+                                            <span class="badge badge-sm badge-warning text-dark">VIP</span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if asistencia.metodo == 'BARCODE' %}
                                             <span class="badge badge-sm badge-info text-white font-semibold">🔵 Código</span>
                                         {% else %}
-                                            <span class="badge badge-sm badge-warning text-gray-900 font-semibold">✏️ Manual</span>
+                                            <span class="badge badge-sm badge-warning text-dark font-semibold">✏️ Manual</span>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -226,7 +226,7 @@
                 {% endif %}
             {% else %}
                 <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-                    <p class="text-gray-600 font-semibold">ℹ️ No hay asistencias para los filtros seleccionados</p>
+                    <p class="text-gray font-semibold">ℹ️ No hay asistencias para los filtros seleccionados</p>
                 </div>
             {% endif %}
         </div>

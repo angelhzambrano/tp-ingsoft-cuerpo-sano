@@ -6,7 +6,7 @@
 <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Gestión de Membresías</h1>
-        <a href="{% url 'membresias:crear' %}" class="btn btn-primary">Nueva Membresía</a>
+        <a href="{% url 'membresias:crear' %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Nueva Membresía</a>
     </div>
 
     <div class="overflow-x-auto">
@@ -36,16 +36,16 @@
                                 {% elif membresia.estado == "VENCIDA" %}
                                     <span class="badge badge-warning">Vencida</span>
                                 {% else %}
-                                    <span class="badge badge-error">Cancelada</span>
+                                    <span class="badge badge-danger">Cancelada</span>
                                 {% endif %}
                             </td>
                             <td>${{ membresia.tipo.precio }}</td>
                             <td class="space-x-2">
-                                <a href="{% url 'membresias:detalle' membresia.pk %}" class="btn btn-sm btn-ghost">Ver</a>
+                                <a href="{% url 'membresias:detalle' membresia.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Ver</a>
                                 {% if membresia.estado == "ACTIVA" %}
-                                    <a href="{% url 'membresias:editar' membresia.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                                    <a href="{% url 'membresias:editar' membresia.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Editar</a>
                                 {% endif %}
-                                <a href="{% url 'membresias:print' membresia.pk %}" class="btn btn-sm btn-ghost">Imprimir</a>
+                                <a href="{% url 'membresias:print' membresia.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Imprimir</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -58,7 +58,7 @@
         {% endif %}
     </div>
 
-    <div class="mt-6 text-sm text-gray-600">
+    <div class="mt-6 text-sm text-gray">
         Total: <strong>{{ total }}</strong> membresía(s)
     </div>
 </div>

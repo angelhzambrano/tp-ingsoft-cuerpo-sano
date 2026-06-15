@@ -12,15 +12,15 @@
             <!-- Header con branding -->
             <div class="text-center mb-8">
                 <div class="text-5xl mb-2">💪</div>
-                <h1 class="text-3xl font-bold text-gray-800">Cuerpo Sano</h1>
-                <p class="text-gray-600 text-sm mt-1">Sistema de Gestión</p>
+                <h1 class="text-3xl font-bold text-dark">Cuerpo Sano</h1>
+                <p class="text-gray text-sm mt-1">Sistema de Gestión</p>
             </div>
 
             <!-- Card de login -->
             <div class="card bg-white shadow-2xl rounded-2xl border border-gray-100">
                 <div class="card-body p-8">
-                    <h2 class="card-title text-2xl text-center mb-2 text-gray-800">Bienvenido</h2>
-                    <p class="text-center text-gray-600 text-sm mb-8">Ingresá con tu cuenta de staff</p>
+                    <h2 class="card-title text-2xl text-center mb-2 text-dark">Bienvenido</h2>
+                    <p class="text-center text-gray text-sm mb-8">Ingresá con tu cuenta de staff</p>
 
                 {% if form.non_field_errors %}
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -38,7 +38,7 @@
 
                     <div class="form-control">
                         <label class="label pb-2">
-                            <span class="label-text font-semibold text-gray-700">👤 Usuario</span>
+                            <span class="label-text font-semibold text-dark-secondary">👤 Usuario</span>
                         </label>
                         {{ form.username }}
                         {% if form.username.errors %}
@@ -50,7 +50,7 @@
 
                     <div class="form-control">
                         <label class="label pb-2">
-                            <span class="label-text font-semibold text-gray-700">🔒 Contraseña</span>
+                            <span class="label-text font-semibold text-dark-secondary">🔒 Contraseña</span>
                         </label>
                         {{ form.password }}
                         {% if form.password.errors %}

@@ -7,7 +7,7 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">📅 Horarios de Clases</h1>
         {% if is_admin %}
-            <a href="{% url 'actividades:crear_horario' %}" class="btn btn-primary">Nuevo Horario</a>
+            <a href="{% url 'actividades:crear_horario' %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Nuevo Horario</a>
         {% endif %}
     </div>
 
@@ -46,8 +46,8 @@
                             </td>
                             <td class="space-x-2">
                                 {% if is_admin %}
-                                    <a href="{% url 'actividades:inscripciones_horario' horario.pk %}" class="btn btn-sm btn-ghost">Inscritos</a>
-                                    <a href="{% url 'actividades:editar_horario' horario.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                                    <a href="{% url 'actividades:inscripciones_horario' horario.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Inscritos</a>
+                                    <a href="{% url 'actividades:editar_horario' horario.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Editar</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -61,7 +61,7 @@
         {% endif %}
     </div>
 
-    <div class="mt-6 text-sm text-gray-600">
+    <div class="mt-6 text-sm text-gray">
         Total: <strong>{{ total }}</strong> horario(s)
     </div>
 </div>

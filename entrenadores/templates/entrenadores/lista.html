@@ -6,7 +6,7 @@
 <div class="container mx-auto p-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Entrenadores</h1>
-        <a href="{% url 'entrenadores:crear' %}" class="btn btn-primary">+ Nuevo Entrenador</a>
+        <a href="{% url 'entrenadores:crear' %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">+ Nuevo Entrenador</a>
     </div>
 
     <div class="overflow-x-auto">
@@ -33,13 +33,13 @@
                                 {% if entrenador.activo %}
                                     <span class="badge badge-success">Activo</span>
                                 {% else %}
-                                    <span class="badge badge-error">Inactivo</span>
+                                    <span class="badge badge-danger">Inactivo</span>
                                 {% endif %}
                             </td>
                             <td class="space-x-2">
-                                <a href="{% url 'entrenadores:detalle' entrenador.pk %}" class="btn btn-sm btn-ghost">Ver</a>
-                                <a href="{% url 'entrenadores:editar' entrenador.pk %}" class="btn btn-sm btn-ghost">Editar</a>
-                                <a href="{% url 'entrenadores:historial_asistencias' entrenador.pk %}" class="btn btn-sm btn-ghost">Asistencias</a>
+                                <a href="{% url 'entrenadores:detalle' entrenador.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Ver</a>
+                                <a href="{% url 'entrenadores:editar' entrenador.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Editar</a>
+                                <a href="{% url 'entrenadores:historial_asistencias' entrenador.pk %}" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">Asistencias</a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -6,7 +6,7 @@
 <div class="container mx-auto p-4 max-w-2xl">
     <h1 class="text-3xl font-bold mb-6">Cancelar Inscripción</h1>
 
-    <div class="card bg-base-100 shadow-md">
+    <div class="card">
         <div class="card-body">
             <div class="alert alert-warning mb-6">
                 <div>
@@ -16,29 +16,29 @@
 
             <div class="space-y-3 mb-6">
                 <div>
-                    <p class="text-gray-600 text-sm">Miembro</p>
+                    <p class="text-gray text-sm">Miembro</p>
                     <p class="font-semibold text-lg">{{ inscripcion.miembro }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-600 text-sm">Actividad</p>
+                    <p class="text-gray text-sm">Actividad</p>
                     <p class="font-semibold">{{ inscripcion.horario.actividad.nombre }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-600 text-sm">Horario</p>
+                    <p class="text-gray text-sm">Horario</p>
                     <p class="font-semibold">
                         {{ inscripcion.horario.get_dia_semana_display }}
                         {{ inscripcion.horario.hora_inicio|time:"H:i" }} - {{ inscripcion.horario.hora_fin|time:"H:i" }}
                     </p>
                 </div>
                 <div>
-                    <p class="text-gray-600 text-sm">Fecha de Inscripción</p>
+                    <p class="text-gray text-sm">Fecha de Inscripción</p>
                     <p class="font-semibold">{{ inscripcion.fecha_inscripcion|date:"d/m/Y" }}</p>
                 </div>
             </div>
 
             <form method="post" class="flex gap-2 justify-end">
                 {% csrf_token %}
-                <a href="{% url 'actividades:inscripciones_horario' inscripcion.horario.pk %}" class="btn btn-ghost">No, volver</a>
+                <a href="{% url 'actividades:inscripciones_horario' inscripcion.horario.pk %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">No, volver</a>
                 <button type="submit" class="btn btn-error">Sí, cancelar inscripción</button>
             </form>
         </div>

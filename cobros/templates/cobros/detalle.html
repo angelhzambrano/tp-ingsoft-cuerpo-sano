@@ -7,50 +7,50 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Detalle de Cobro</h1>
         <div class="space-x-2">
-            <a href="{% url 'cobros:comprobante' cobro.pk %}" class="btn btn-primary">Imprimir Comprobante</a>
-            <a href="{% url 'cobros:lista' %}" class="btn btn-ghost">Volver</a>
+            <a href="{% url 'cobros:comprobante' cobro.pk %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Imprimir Comprobante</a>
+            <a href="{% url 'cobros:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
         </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="card bg-base-100 shadow-md">
+        <div class="card">
             <div class="card-body">
                 <h2 class="card-title">Información del Miembro</h2>
                 <div class="space-y-3">
                     <div>
-                        <p class="text-gray-600 text-sm">Nombre</p>
+                        <p class="text-gray text-sm">Nombre</p>
                         <p class="font-semibold text-lg">{{ cobro.miembro }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">DNI</p>
+                        <p class="text-gray text-sm">DNI</p>
                         <p class="font-semibold">{{ cobro.miembro.dni }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Tipo</p>
+                        <p class="text-gray text-sm">Tipo</p>
                         <p class="font-semibold">{{ cobro.miembro.get_tipo_miembro_display }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Teléfono</p>
+                        <p class="text-gray text-sm">Teléfono</p>
                         <p class="font-semibold">{{ cobro.miembro.telefono }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card bg-base-100 shadow-md">
+        <div class="card">
             <div class="card-body">
                 <h2 class="card-title">Información de Membresía</h2>
                 <div class="space-y-3">
                     <div>
-                        <p class="text-gray-600 text-sm">Tipo</p>
+                        <p class="text-gray text-sm">Tipo</p>
                         <p class="font-semibold text-lg">{{ cobro.membresia.tipo.nombre }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Vigencia</p>
+                        <p class="text-gray text-sm">Vigencia</p>
                         <p class="font-semibold">{{ cobro.membresia.fecha_inicio|date:"d/m/Y" }} - {{ cobro.membresia.fecha_fin|date:"d/m/Y" }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Precio de Membresía</p>
+                        <p class="text-gray text-sm">Precio de Membresía</p>
                         <p class="font-semibold">${{ cobro.membresia.tipo.precio }}</p>
                     </div>
                 </div>
@@ -64,15 +64,15 @@
             <div class="space-y-4">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                        <p class="text-gray-600 text-sm">Monto Base</p>
+                        <p class="text-gray text-sm">Monto Base</p>
                         <p class="text-xl font-bold">${{ cobro.monto_base }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Descuento</p>
+                        <p class="text-gray text-sm">Descuento</p>
                         <p class="text-xl font-bold text-success">{{ cobro.descuento_porcentaje }}%</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Descuento $</p>
+                        <p class="text-gray text-sm">Descuento $</p>
                         <p class="text-xl font-bold">
                             ${%  widthratio cobro.monto_base cobro.descuento_porcentaje 100 %}
                         </p>
@@ -83,23 +83,23 @@
                     </div>
                 </div>
 
-                <div class="divider"></div>
+                <div class="border-t border-neutral-200 my-4"></div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <p class="text-gray-600 text-sm">Forma de Pago</p>
+                        <p class="text-gray text-sm">Forma de Pago</p>
                         <p class="font-semibold">{{ cobro.get_forma_pago_display }}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600 text-sm">Fecha de Registro</p>
+                        <p class="text-gray text-sm">Fecha de Registro</p>
                         <p class="font-semibold">{{ cobro.fecha|date:"d/m/Y H:i" }}</p>
                     </div>
                 </div>
 
                 {% if cobro.observaciones %}
-                    <div class="divider"></div>
+                    <div class="border-t border-neutral-200 my-4"></div>
                     <div>
-                        <p class="text-gray-600 text-sm">Observaciones</p>
+                        <p class="text-gray text-sm">Observaciones</p>
                         <p class="font-semibold">{{ cobro.observaciones }}</p>
                     </div>
                 {% endif %}

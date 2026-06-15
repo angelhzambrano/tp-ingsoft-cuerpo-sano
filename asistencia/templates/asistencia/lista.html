@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="form-control flex justify-end pt-6">
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <button type="submit" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Filtrar</button>
                 </div>
             </form>
         </div>
@@ -80,7 +80,7 @@
         {% endif %}
     </div>
 
-    <div class="mt-6 text-sm text-gray-600 flex justify-between items-center">
+    <div class="mt-6 text-sm text-gray flex justify-between items-center">
         <div>Total: <strong>{{ total }}</strong> asistencia(s)</div>
         <div class="space-x-2">
             <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm">Volver a Registro</a>
