@@ -23,9 +23,11 @@ def require_group(group_name):
 def lista_actividades(request):
     """Listado de actividades"""
     actividades = Actividad.objects.prefetch_related('horarios').order_by('nombre')
+    is_admin = request.user.groups.filter(name='Admin').exists()
     context = {
         'actividades': actividades,
         'total': actividades.count(),
+        'is_admin': is_admin,
     }
     return render(request, 'actividades/lista.html', context)
 
@@ -52,10 +54,12 @@ def detalle_actividad(request, pk):
     """Detalle de una actividad con sus horarios"""
     actividad = get_object_or_404(Actividad, pk=pk)
     horarios = actividad.horarios.all()
+    is_admin = request.user.groups.filter(name='Admin').exists()
 
     context = {
         'actividad': actividad,
         'horarios': horarios,
+        'is_admin': is_admin,
     }
     return render(request, 'actividades/detalle.html', context)
 
@@ -83,9 +87,11 @@ def editar_actividad(request, pk):
 def lista_horarios(request):
     """Listado de horarios de clase"""
     horarios = HorarioClase.objects.select_related('actividad', 'entrenador').order_by('dia_semana', 'hora_inicio')
+    is_admin = request.user.groups.filter(name='Admin').exists()
     context = {
         'horarios': horarios,
         'total': horarios.count(),
+        'is_admin': is_admin,
     }
     return render(request, 'actividades/lista_horarios.html', context)
 
