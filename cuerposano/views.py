@@ -9,6 +9,13 @@ from entrenadores.models import Entrenador
 from membresias.models import Membresia
 
 
+def home(request):
+    """Página de inicio - redirige a dashboard si está autenticado"""
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return redirect('login')
+
+
 def ping(request):
     """Ultra simple health check - no DB access"""
     return JsonResponse({'status': 'alive', 'message': 'WSGI is running'})

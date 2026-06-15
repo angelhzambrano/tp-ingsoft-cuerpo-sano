@@ -6,7 +6,8 @@ from . import views
 urlpatterns = [
     path('ping/', views.ping),
     path('healthz/', views.healthz),
-    path('', views.dashboard, name='dashboard'),
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('accounts/logout/', views.custom_logout, name='logout'),

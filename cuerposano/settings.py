@@ -84,7 +84,7 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = []  # relajar para demo académico
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 
 LANGUAGE_CODE = 'es-ar'
