@@ -84,7 +84,11 @@
         </div>
     {% else %}
         <div class="alert alert-info">
-            <p>No hay horarios. <a href="{% url 'actividades:crear_horario' %}" class="link">Crear uno</a></p>
+            <p>No hay horarios.
+                {% if is_admin %}
+                    <a href="{% url 'actividades:crear_horario' %}" class="link">Crear uno</a>
+                {% endif %}
+            </p>
         </div>
     {% endif %}
 </div>

@@ -145,7 +145,8 @@ def horarios_actividad(request, pk):
     if is_miembro:
         try:
             miembro_usuario = request.user.miembro
-        except Exception:
+        except AttributeError:
+            # El usuario no tiene atributo miembro (no está vinculado)
             pass
 
     context = {
