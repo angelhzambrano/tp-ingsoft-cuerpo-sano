@@ -4,9 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from datetime import datetime, time
 from miembros.models import Miembro
 from entrenadores.models import Entrenador
 from membresias.models import Membresia
+from actividades.models import Inscripcion, HorarioClase
 
 
 def home(request):
@@ -89,6 +91,11 @@ def dashboard(request):
             try:
                 entrenador = request.user.entrenador
                 context['entrenador'] = entrenador
+                # Obtener clases asignadas
+                clases_asignadas = HorarioClase.objects.filter(
+                    entrenador=entrenador
+                ).select_related('actividad').order_by('dia_semana', 'hora_inicio')
+                context['clases_asignadas'] = clases_asignadas
             except Entrenador.DoesNotExist:
                 context['sin_asignacion'] = True
         elif context['is_miembro']:
@@ -102,6 +109,33 @@ def dashboard(request):
                     fecha_fin__gte=timezone.now().date()
                 ).first()
                 context['membresia'] = membresia
+
+                # Obtener inscripciones activas
+                inscripciones = Inscripcion.objects.filter(
+                    miembro=miembro,
+                    estado='ACTIVA'
+                ).select_related('horario__actividad', 'horario__entrenador').order_by('horario__dia_semana', 'horario__hora_inicio')
+                context['inscripciones'] = inscripciones
+
+                # Obtener próxima clase (hoy o después)
+                hoy = timezone.now().date()
+                ahora = timezone.now().time()
+                dias_semana = ['LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB', 'DOM']
+                hoy_dia_semana = dias_semana[hoy.weekday()]
+
+                proxima_clase = None
+                for inscripcion in inscripciones:
+                    horario_dia = inscripcion.horario.dia_semana
+                    # Si es hoy y la hora aún no pasó
+                    if horario_dia == hoy_dia_semana and inscripcion.horario.hora_inicio > ahora:
+                        if not proxima_clase or inscripcion.horario.hora_inicio < proxima_clase.horario.hora_inicio:
+                            proxima_clase = inscripcion
+                    # Si es después de hoy
+                    elif dias_semana.index(horario_dia) > dias_semana.index(hoy_dia_semana):
+                        if not proxima_clase:
+                            proxima_clase = inscripcion
+
+                context['proxima_clase'] = proxima_clase
             except Miembro.DoesNotExist:
                 context['sin_asignacion'] = True
 

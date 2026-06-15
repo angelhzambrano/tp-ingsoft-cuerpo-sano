@@ -136,12 +136,24 @@
             </div>
         </div>
 
-        <!-- Actividades -->
-        <div class="card bg-gradient-to-r from-purple-50 to-purple-100 shadow-lg border border-purple-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'actividades:lista' %}'">
+        <!-- Clases Asignadas -->
+        <div class="card bg-gradient-to-r from-purple-50 to-purple-100 shadow-lg border border-purple-200">
             <div class="card-body p-6">
-                <p class="text-sm font-semibold text-purple-600">MIS ACTIVIDADES</p>
-                <p class="text-3xl font-bold text-purple-900 mt-2">Clases</p>
-                <p class="text-sm text-purple-700 mt-4">Ver calendario de clases programadas</p>
+                <p class="text-sm font-semibold text-purple-600">MIS CLASES</p>
+                {% if clases_asignadas %}
+                    <p class="text-3xl font-bold text-purple-900 mt-2">{{ clases_asignadas|length }}</p>
+                    <div class="mt-4 space-y-2 text-sm text-gray-700">
+                        {% for horario in clases_asignadas|slice:":3" %}
+                            <p>📅 {{ horario.actividad.nombre }} - {{ horario.get_dia_semana_display }} {{ horario.hora_inicio|time:"H:i" }}</p>
+                        {% endfor %}
+                        {% if clases_asignadas|length > 3 %}
+                            <p class="text-xs text-gray-600 mt-2">+{{ clases_asignadas|length|add:"-3" }} más</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-lg font-bold text-purple-900 mt-2">Sin clases asignadas</p>
+                    <p class="text-sm text-purple-700 mt-2">Contacta al administrador para recibir asignaciones</p>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -184,6 +196,55 @@
             </div>
         </div>
     </div>
+
+    <!-- Próxima clase -->
+    {% if proxima_clase %}
+    <div class="card bg-gradient-to-r from-orange-50 to-orange-100 shadow-lg border border-orange-200 mb-8">
+        <div class="card-body p-6">
+            <p class="text-sm font-semibold text-orange-600">⏰ PRÓXIMA CLASE</p>
+            <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ proxima_clase.horario.actividad.nombre }}</h3>
+            <div class="mt-4 space-y-2 text-sm text-gray-700">
+                <p>📅 {{ proxima_clase.horario.get_dia_semana_display }}</p>
+                <p>🕐 {{ proxima_clase.horario.hora_inicio|time:"H:i" }} - {{ proxima_clase.horario.hora_fin|time:"H:i" }}</p>
+                {% if proxima_clase.horario.entrenador %}
+                    <p>👨‍🏫 {{ proxima_clase.horario.entrenador.nombre }} {{ proxima_clase.horario.entrenador.apellido }}</p>
+                {% endif %}
+                {% if proxima_clase.horario.sala %}
+                    <p>📍 Sala: {{ proxima_clase.horario.sala }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mis inscripciones -->
+    {% if inscripciones %}
+    <div class="card bg-white shadow-lg border border-gray-100 mb-8">
+        <div class="card-body p-6">
+            <h2 class="card-title text-lg mb-4">📚 Mis Inscripciones</h2>
+            <div class="space-y-3">
+                {% for inscripcion in inscripciones %}
+                    <div class="border border-gray-200 rounded p-3 hover:bg-gray-50">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold text-gray-900">{{ inscripcion.horario.actividad.nombre }}</p>
+                                <p class="text-sm text-gray-600">{{ inscripcion.horario.get_dia_semana_display }} - {{ inscripcion.horario.hora_inicio|time:"H:i" }}</p>
+                                {% if inscripcion.horario.entrenador %}
+                                    <p class="text-xs text-gray-500">Con: {{ inscripcion.horario.entrenador.nombre }}</p>
+                                {% endif %}
+                            </div>
+                            <span class="badge badge-sm badge-success">{{ inscripcion.get_estado_display }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mb-8">
+        <p>🏃 Aún no tienes inscripciones. ¡Explora nuestras clases!</p>
+    </div>
+    {% endif %}
 
     <!-- Actividades disponibles -->
     <div class="card bg-white shadow-lg border border-gray-100" onclick="window.location='{% url 'actividades:lista' %}'">
