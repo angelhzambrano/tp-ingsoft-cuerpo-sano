@@ -3,8 +3,10 @@ from django.db import connection
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from miembros.models import Miembro
 from entrenadores.models import Entrenador
+from membresias.models import Membresia
 
 
 def healthz(request):
@@ -47,6 +49,13 @@ def dashboard(request):
         try:
             miembro = request.user.miembro
             context['miembro'] = miembro
+            # Obtener membresía activa
+            membresia = Membresia.objects.filter(
+                miembro=miembro,
+                estado='ACTIVA',
+                fecha_fin__gte=timezone.now().date()
+            ).first()
+            context['membresia'] = membresia
         except Miembro.DoesNotExist:
             context['sin_asignacion'] = True
 
