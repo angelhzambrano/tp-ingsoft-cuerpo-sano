@@ -1,10 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from .models import Actividad, HorarioClase, Inscripcion
 from .forms import ActividadForm, HorarioClaseForm, InscripcionForm
+
+
+def require_group(group_name):
+    """Decorador para requerir pertenencia a un grupo"""
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            if not request.user.groups.filter(name=group_name).exists():
+                return HttpResponseForbidden('No tienes permiso para acceder a esta página')
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @login_required
@@ -19,8 +31,9 @@ def lista_actividades(request):
 
 
 @login_required
+@require_group('Admin')
 def crear_actividad(request):
-    """Crear nueva actividad"""
+    """Crear nueva actividad - Solo Admin"""
     if request.method == 'POST':
         form = ActividadForm(request.POST)
         if form.is_valid():
@@ -48,8 +61,9 @@ def detalle_actividad(request, pk):
 
 
 @login_required
+@require_group('Admin')
 def editar_actividad(request, pk):
-    """Editar actividad"""
+    """Editar actividad - Solo Admin"""
     actividad = get_object_or_404(Actividad, pk=pk)
 
     if request.method == 'POST':
@@ -77,8 +91,9 @@ def lista_horarios(request):
 
 
 @login_required
+@require_group('Admin')
 def crear_horario(request):
-    """Crear nuevo horario de clase"""
+    """Crear nuevo horario de clase - Solo Admin"""
     if request.method == 'POST':
         form = HorarioClaseForm(request.POST)
         if form.is_valid():
@@ -93,8 +108,9 @@ def crear_horario(request):
 
 
 @login_required
+@require_group('Admin')
 def editar_horario(request, pk):
-    """Editar horario de clase"""
+    """Editar horario de clase - Solo Admin"""
     horario = get_object_or_404(HorarioClase, pk=pk)
 
     if request.method == 'POST':
@@ -116,17 +132,36 @@ def horarios_actividad(request, pk):
     actividad = get_object_or_404(Actividad, pk=pk)
     horarios = actividad.horarios.prefetch_related('inscripciones').order_by('dia_semana', 'hora_inicio')
 
+    # Información de permisos
+    is_admin = request.user.groups.filter(name='Admin').exists()
+    is_miembro = request.user.groups.filter(name='Miembro').exists()
+    miembro_usuario = None
+    if is_miembro:
+        try:
+            miembro_usuario = request.user.miembro
+        except Exception:
+            pass
+
     context = {
         'actividad': actividad,
         'horarios': horarios,
+        'is_admin': is_admin,
+        'is_miembro': is_miembro,
+        'miembro_usuario': miembro_usuario,
     }
     return render(request, 'actividades/horarios_actividad.html', context)
 
 
 @login_required
 def inscripciones_horario(request, pk):
-    """Listado de miembros inscritos en un horario"""
+    """Listado de miembros inscritos en un horario - Admin/Entrenador de la clase"""
     horario = get_object_or_404(HorarioClase, pk=pk)
+    is_admin = request.user.groups.filter(name='Admin').exists()
+    is_entrenador_clase = horario.entrenador and request.user.entrenador == horario.entrenador if hasattr(request.user, 'entrenador') else False
+
+    if not (is_admin or is_entrenador_clase):
+        return HttpResponseForbidden('No tienes permiso para ver los inscritos en esta clase')
+
     inscripciones = horario.inscripciones.filter(estado='ACTIVA').select_related('miembro')
 
     context = {
@@ -139,25 +174,51 @@ def inscripciones_horario(request, pk):
 
 
 @login_required
+@require_group('Miembro')
 def inscribir_miembro(request):
-    """Crear nueva inscripción"""
+    """Crear nueva inscripción - Solo Miembros"""
+    try:
+        miembro = request.user.miembro
+    except Exception:
+        return HttpResponseForbidden('Tu usuario no está vinculado a un registro de miembro')
+
+    # Pre-llenar desde query params
+    horario_pk = request.GET.get('horario')
+    horario = None
+    initial_data = {'miembro': miembro}
+
+    if horario_pk:
+        try:
+            horario = HorarioClase.objects.get(pk=horario_pk)
+            initial_data['horario'] = horario
+        except HorarioClase.DoesNotExist:
+            pass
+
     if request.method == 'POST':
         form = InscripcionForm(request.POST)
         if form.is_valid():
+            # Verificar que solo pueda inscribirse a sí mismo
+            if form.cleaned_data['miembro'] != miembro:
+                messages.error(request, 'Solo puedes inscribirte a ti mismo')
+                return render(request, 'actividades/form_inscripcion.html', {'form': form})
+
             try:
                 with transaction.atomic():
                     inscripcion = form.save()
+                    entrenador_info = f" con {inscripcion.horario.entrenador}" if inscripcion.horario.entrenador else ""
                     messages.success(
                         request,
-                        f'Inscripción de {inscripcion.miembro} exitosa'
+                        f'¡Te inscribiste exitosamente en {inscripcion.horario.actividad}!{entrenador_info}'
                     )
                     return redirect('actividades:horarios_actividad', pk=inscripcion.horario.actividad.pk)
             except ValidationError as e:
                 messages.error(request, str(e))
     else:
-        form = InscripcionForm()
+        form = InscripcionForm(initial=initial_data)
+        # Filtrar solo el miembro autenticado
+        form.fields['miembro'].queryset = form.fields['miembro'].queryset.filter(pk=miembro.pk)
 
-    context = {'form': form}
+    context = {'form': form, 'miembro': miembro, 'horario': horario}
     return render(request, 'actividades/form_inscripcion.html', context)
 
 
