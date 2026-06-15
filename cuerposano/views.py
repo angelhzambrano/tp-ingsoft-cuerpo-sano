@@ -2,7 +2,9 @@ from django.http import JsonResponse
 from django.db import connection
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
+from miembros.models import Miembro
+from entrenadores.models import Entrenador
 
 
 def healthz(request):
@@ -20,10 +22,38 @@ def custom_logout(request):
 
 
 @login_required
+def dashboard(request):
+    """Dashboard principal según rol del usuario"""
+    context = {
+        'is_admin': request.user.groups.filter(name='Admin').exists(),
+        'is_recepcion': request.user.groups.filter(name='Recepcion').exists(),
+        'is_entrenador': request.user.groups.filter(name='Entrenador').exists(),
+        'is_miembro': request.user.groups.filter(name='Miembro').exists(),
+    }
+
+    if context['is_admin']:
+        context['stats'] = {
+            'miembros': Miembro.objects.count(),
+            'entrenadores': Entrenador.objects.count(),
+            'activos': Miembro.objects.filter(activo=True).count(),
+        }
+    elif context['is_entrenador']:
+        try:
+            entrenador = request.user.entrenador
+            context['entrenador'] = entrenador
+        except Entrenador.DoesNotExist:
+            context['sin_asignacion'] = True
+    elif context['is_miembro']:
+        try:
+            miembro = request.user.miembro
+            context['miembro'] = miembro
+        except Miembro.DoesNotExist:
+            context['sin_asignacion'] = True
+
+    return render(request, 'dashboard.html', context)
+
+
+@login_required
 def home_redirect(request):
-    if request.user.groups.filter(name='Recepcion').exists():
-        return redirect('asistencia:registro')
-    elif request.user.groups.filter(name='Entrenador').exists():
-        return redirect('entrenadores:lista')
-    else:
-        return redirect('miembros:lista')
+    """Redirige al dashboard"""
+    return redirect('dashboard')

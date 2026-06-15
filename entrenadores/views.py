@@ -2,14 +2,28 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
+from django.http import HttpResponseForbidden
 from datetime import date
 from .models import Entrenador, AsistenciaEntrenador
 from .forms import EntrenadorForm, AsistenciaEntrenadorForm
 from actividades.models import HorarioClase
 
 
+def _puede_ver_entrenadores(user):
+    """Solo Admin puede ver lista de entrenadores"""
+    return user.groups.filter(name='Admin').exists()
+
+
+def _puede_crear_entrenador(user):
+    """Solo Admin puede crear entrenadores"""
+    return user.groups.filter(name='Admin').exists()
+
+
 @login_required
 def lista_entrenadores(request):
+    if not _puede_ver_entrenadores(request.user):
+        return HttpResponseForbidden('No tienes permiso para ver esta página')
+
     entrenadores = Entrenador.objects.all().order_by('-activo', 'apellido')
     return render(request, 'entrenadores/lista.html', {'entrenadores': entrenadores})
 
@@ -17,6 +31,9 @@ def lista_entrenadores(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def crear_entrenador(request):
+    if not _puede_crear_entrenador(request.user):
+        return HttpResponseForbidden('No tienes permiso para crear entrenadores')
+
     if request.method == 'POST':
         form = EntrenadorForm(request.POST)
         if form.is_valid():

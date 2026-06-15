@@ -2,13 +2,27 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.http import HttpResponseForbidden
 from .models import Miembro, Carnet
 from .forms import MiembroForm
 from .utils import generar_barcode_cloudinary
 
 
+def _puede_ver_miembros(user):
+    """Verificar si usuario puede ver lista de miembros"""
+    return user.groups.filter(name__in=['Admin', 'Recepcion']).exists()
+
+
+def _puede_crear_miembro(user):
+    """Verificar si usuario puede crear miembros"""
+    return user.groups.filter(name__in=['Admin', 'Recepcion']).exists()
+
+
 @login_required
 def lista_miembros(request):
+    if not _puede_ver_miembros(request.user):
+        return HttpResponseForbidden('No tienes permiso para ver esta página')
+
     miembros = Miembro.objects.all().order_by('-fecha_alta')
     context = {
         'miembros': miembros,
@@ -19,6 +33,9 @@ def lista_miembros(request):
 
 @login_required
 def crear_miembro(request):
+    if not _puede_crear_miembro(request.user):
+        return HttpResponseForbidden('No tienes permiso para crear miembros')
+
     if request.method == 'POST':
         form = MiembroForm(request.POST, request.FILES)
         if form.is_valid():
