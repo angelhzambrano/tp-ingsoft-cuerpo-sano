@@ -120,9 +120,9 @@
                         </button>
                         <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white text-dark rounded-lg shadow-lg z-50">
                             {% if user.is_staff %}
-                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-light rounded-t-lg border-b border-neutral-100">⚙️ Admin</a>
+                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-gray-50 rounded-t-lg border-b border-neutral-200 text-dark font-medium transition">⚙️ Admin</a>
                             {% endif %}
-                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-light {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg">🚪 Cerrar sesión</a>
+                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-gray-50 {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg text-dark font-medium transition">🚪 Cerrar sesión</a>
                         </div>
                     </div>
                 </div>
