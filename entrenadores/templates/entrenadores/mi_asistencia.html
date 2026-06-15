@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Asistencia - Cuerpo Sano{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">📋 Mi Asistencia</h1>
+        <p class="text-gray-600 text-sm mt-1">Historial personal como entrenador</p>
+    </div>
+
+    <!-- Entrenador Info -->
+    <div class="card bg-gradient-to-r from-indigo-50 to-blue-50 shadow-md border border-indigo-200 mb-6">
+        <div class="card-body p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm font-semibold text-indigo-600">ENTRENADOR</p>
+                    <h2 class="text-2xl font-bold text-gray-900">{{ entrenador.nombre }} {{ entrenador.apellido }}</h2>
+                    <p class="text-gray-600 mt-2">📌 {{ entrenador.especialidad }}</p>
+                    {% if entrenador.email %}
+                    <p class="text-gray-600">📧 {{ entrenador.email }}</p>
+                    {% endif %}
+                    {% if entrenador.telefono %}
+                    <p class="text-gray-600">☎️ {{ entrenador.telefono }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if entrenador.activo %}
+                    <span class="badge badge-lg badge-success text-white font-bold">✓ Activo</span>
+                    {% else %}
+                    <span class="badge badge-lg badge-ghost font-bold">✗ Inactivo</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    {% if stats.total > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <!-- Total Asistencias -->
+        <div class="card bg-gradient-to-br from-blue-50 to-blue-100 shadow-md border border-blue-200">
+            <div class="card-body p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-blue-600">TOTAL</p>
+                        <p class="text-4xl font-bold text-blue-900 mt-2">{{ stats.total }}</p>
+                    </div>
+                    <div class="text-4xl">📍</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Presentes -->
+        <div class="card bg-gradient-to-br from-green-50 to-green-100 shadow-md border border-green-200">
+            <div class="card-body p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-green-600">PRESENTES</p>
+                        <p class="text-4xl font-bold text-green-900 mt-2">{{ stats.presentes }}</p>
+                    </div>
+                    <div class="text-4xl">✓</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ausentes -->
+        <div class="card bg-gradient-to-br from-red-50 to-red-100 shadow-md border border-red-200">
+            <div class="card-body p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-red-600">AUSENTES</p>
+                        <p class="text-4xl font-bold text-red-900 mt-2">{{ stats.ausentes }}</p>
+                    </div>
+                    <div class="text-4xl">✗</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Justificadas -->
+        <div class="card bg-gradient-to-br from-yellow-50 to-yellow-100 shadow-md border border-yellow-200">
+            <div class="card-body p-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-semibold text-yellow-600">JUSTIFICADAS</p>
+                        <p class="text-4xl font-bold text-yellow-900 mt-2">{{ stats.justificadas }}</p>
+                    </div>
+                    <div class="text-4xl">📝</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabla de Asistencias -->
+    <div class="card bg-white shadow-lg border border-gray-100 rounded-xl">
+        <div class="card-body p-6">
+            <h2 class="card-title text-lg text-gray-800 mb-4">📋 Historial de Asistencias</h2>
+
+            {% if asistencias %}
+                <div class="overflow-x-auto">
+                    <table class="table w-full text-sm">
+                        <thead class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b-2 border-indigo-200">
+                            <tr>
+                                <th class="font-bold text-indigo-900">📅 Fecha</th>
+                                <th class="font-bold text-indigo-900">🏋️ Clase/Horario</th>
+                                <th class="font-bold text-indigo-900">✅ Estado</th>
+                                <th class="font-bold text-indigo-900">📝 Observaciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for asistencia in asistencias|slice:":50" %}
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="font-medium text-gray-900">{{ asistencia.fecha|date:"d/m/Y" }}</td>
+                                    <td class="text-gray-700">{{ asistencia.horario.clase.nombre }}</td>
+                                    <td>
+                                        {% if asistencia.tipo == 'PRESENTE' %}
+                                            <span class="badge badge-success text-white">✓ Presente</span>
+                                        {% else %}
+                                            <span class="badge badge-error text-white">✗ Ausente</span>
+                                        {% endif %}
+                                        {% if asistencia.justificada %}
+                                            <span class="badge badge-info text-white">Justificada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-gray-600 text-xs">{{ asistencia.observaciones|truncatewords:10 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if asistencias|length > 50 %}
+                <div class="bg-blue-50 border border-blue-200 rounded-lg mt-4 p-4 text-sm text-blue-800">
+                    ℹ️ Mostrando últimas <span class="font-semibold">50 asistencias</span> de <span class="font-semibold">{{ asistencias|length }} registros</span>.
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                    <p class="text-gray-600 font-semibold">ℹ️ No hay registros de asistencia aún</p>
+                    <p class="text-gray-500 text-sm mt-2">Cuando se registren tus asistencias, aparecerán aquí</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Botón Volver -->
+    <div class="mt-6 text-center">
+        <a href="{% url 'actividades:lista' %}" class="btn btn-outline btn-primary">
+            ⬅️ Volver a Actividades
+        </a>
+    </div>
+</div>
+{% endblock %}

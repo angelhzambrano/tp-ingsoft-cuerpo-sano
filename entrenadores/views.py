@@ -91,6 +91,32 @@ def registro_asistencia_entrenador(request):
 
 
 @login_required
+def mi_asistencia_entrenador(request):
+    """Vista personal de asistencia del entrenador logueado"""
+    try:
+        entrenador = Entrenador.objects.get(email=request.user.email)
+    except Entrenador.DoesNotExist:
+        return render(request, 'entrenadores/sin_asignacion.html', {
+            'mensaje': 'No estás registrado como entrenador en el sistema'
+        })
+
+    asistencias = entrenador.asistencias.all().order_by('-fecha')
+
+    stats = {
+        'total': asistencias.count(),
+        'presentes': asistencias.filter(tipo='PRESENTE').count(),
+        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
+        'justificadas': asistencias.filter(justificada=True).count(),
+    }
+
+    return render(request, 'entrenadores/mi_asistencia.html', {
+        'entrenador': entrenador,
+        'asistencias': asistencias,
+        'stats': stats
+    })
+
+
+@login_required
 def historial_asistencias_entrenador(request, pk):
     entrenador = get_object_or_404(Entrenador, pk=pk)
     asistencias = entrenador.asistencias.all().order_by('-fecha')
