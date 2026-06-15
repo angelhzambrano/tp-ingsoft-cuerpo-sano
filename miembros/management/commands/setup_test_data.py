@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, time
 from miembros.models import Miembro
 from entrenadores.models import Entrenador
 from actividades.models import Actividad, HorarioClase
@@ -140,8 +140,12 @@ class Command(BaseCommand):
         ]
 
         horarios_count = 0
-        for actividad_name, dia, h_inicio, h_fin in horarios_data:
+        for actividad_name, dia, h_inicio_str, h_fin_str in horarios_data:
             actividad = actividades[actividad_name]
+            # Convertir strings a objetos time
+            h_inicio = time(*map(int, h_inicio_str.split(':')))
+            h_fin = time(*map(int, h_fin_str.split(':')))
+
             horario, created = HorarioClase.objects.get_or_create(
                 actividad=actividad,
                 dia_semana=dia,
@@ -154,8 +158,9 @@ class Command(BaseCommand):
             )
             if created:
                 horarios_count += 1
+                self.stdout.write(f'    ✓ {actividad_name} - {dia} {h_inicio_str}-{h_fin_str}')
 
-        self.stdout.write(f'  ✓ {horarios_count} horarios nuevos')
+        self.stdout.write(f'  Total: {horarios_count} horarios nuevos')
 
         # 7. Crear tipos de membresía
         self.stdout.write('\n💳 Creando tipos de membresía...')
