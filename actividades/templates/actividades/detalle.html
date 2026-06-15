@@ -3,58 +3,56 @@
 {% block title %}{{ actividad }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-4 max-w-4xl">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">{{ actividad }}</h1>
-        <div class="space-x-2">
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-bold text-primary">{{ actividad }}</h1>
+        <div class="space-x-3">
             {% if is_admin %}
-                <a href="{% url 'actividades:editar' actividad.pk %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'actividades:editar' actividad.pk %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">Editar</a>
             {% endif %}
-            <a href="{% url 'actividades:lista' %}" class="btn btn-ghost">Volver</a>
+            <a href="{% url 'actividades:lista' %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="card bg-base-100 shadow-md">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="card">
+            <h2 class="card-title">ℹ️ Información</h2>
             <div class="card-body">
-                <h2 class="card-title">Información</h2>
                 {% if actividad.descripcion %}
-                    <p>{{ actividad.descripcion }}</p>
+                    <p class="text-gray">{{ actividad.descripcion }}</p>
                 {% else %}
-                    <p class="text-gray-500">Sin descripción</p>
+                    <p class="text-gray italic">Sin descripción</p>
                 {% endif %}
 
-                <div class="divider"></div>
-
-                <div class="space-y-2">
+                <div class="border-t border-neutral-200 mt-6 pt-6">
                     <div>
-                        <p class="text-gray-600 text-sm">Capacidad Máxima</p>
-                        <p class="text-2xl font-bold">{{ actividad.capacidad_maxima }} personas</p>
+                        <p class="text-sm text-gray">Capacidad Máxima</p>
+                        <p class="text-3xl font-bold text-primary mt-2">{{ actividad.capacidad_maxima }} personas</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card bg-base-100 shadow-md">
+        <div class="card">
+            <h2 class="card-title">📅 Horarios</h2>
             <div class="card-body">
-                <h2 class="card-title">Horarios</h2>
                 {% if horarios %}
-                    <div class="space-y-2">
+                    <div class="space-y-3">
                         {% for horario in horarios %}
-                            <div class="p-2 border border-gray-200 rounded">
-                                <p class="font-semibold">{{ horario.get_dia_semana_display }}</p>
-                                <p class="text-sm text-gray-600">{{ horario.hora_inicio|time:"H:i" }} - {{ horario.hora_fin|time:"H:i" }}</p>
+                            <div class="p-3 border border-neutral-200 rounded-lg hover:bg-light transition">
+                                <p class="font-semibold text-dark">{{ horario.get_dia_semana_display }}</p>
+                                <p class="text-sm text-gray mt-1">{{ horario.hora_inicio|time:"H:i" }} - {{ horario.hora_fin|time:"H:i" }}</p>
                                 {% if horario.sala %}
-                                    <p class="text-sm text-gray-600">Sala: {{ horario.sala }}</p>
+                                    <p class="text-sm text-gray">Sala: {{ horario.sala }}</p>
                                 {% endif %}
                             </div>
                         {% endfor %}
                     </div>
                 {% else %}
-                    <p class="text-gray-500">Sin horarios asignados</p>
+                    <p class="text-gray italic">Sin horarios asignados</p>
                 {% endif %}
 
-                <a href="{% url 'actividades:horarios_actividad' actividad.pk %}" class="btn btn-sm btn-primary mt-4">Ver todos los horarios</a>
+                <a href="{% url 'actividades:horarios_actividad' actividad.pk %}" class="btn-primary w-full inline-block px-4 py-2 rounded-md font-semibold text-white text-center mt-6 hover:opacity-90">Ver todos los horarios</a>
             </div>
         </div>
     </div>

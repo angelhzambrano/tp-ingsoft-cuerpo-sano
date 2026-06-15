@@ -3,90 +3,82 @@
 {% block title %}{{ actividad }} - Horarios{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-4">
-    <div class="flex justify-between items-center mb-6">
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-bold">{{ actividad.nombre }}</h1>
-            <p class="text-gray-600 mt-1">{{ actividad.descripcion }}</p>
+            <h1 class="text-4xl font-bold text-primary">{{ actividad.nombre }}</h1>
+            <p class="text-gray mt-2">{{ actividad.descripcion }}</p>
         </div>
-        <div class="space-x-2">
+        <div class="space-x-3">
             {% if is_admin %}
-                <a href="{% url 'actividades:crear_horario' %}" class="btn btn-primary">Nuevo Horario</a>
+                <a href="{% url 'actividades:crear_horario' %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">+ Nuevo Horario</a>
             {% endif %}
-            <a href="{% url 'actividades:detalle' actividad.pk %}" class="btn btn-ghost">Volver</a>
+            <a href="{% url 'actividades:detalle' actividad.pk %}" class="btn-ghost px-4 py-2 rounded-md hover:opacity-90">Volver</a>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div class="stat bg-base-100">
-            <div class="stat-figure text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            </div>
-            <div class="stat-title">Capacidad</div>
-            <div class="stat-value">{{ actividad.capacidad_maxima }}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="card">
+            <p class="text-sm text-gray">CAPACIDAD MÁXIMA</p>
+            <p class="text-4xl font-bold text-primary mt-2">{{ actividad.capacidad_maxima }}</p>
         </div>
 
-        <div class="stat bg-base-100">
-            <div class="stat-figure text-secondary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
-            <div class="stat-title">Horarios</div>
-            <div class="stat-value">{{ horarios|length }}</div>
+        <div class="card">
+            <p class="text-sm text-gray">HORARIOS DISPONIBLES</p>
+            <p class="text-4xl font-bold text-primary mt-2">{{ horarios|length }}</p>
         </div>
     </div>
 
     {% if horarios %}
         <div class="space-y-4">
             {% for horario in horarios %}
-                <div class="card bg-base-100 shadow-md">
-                    <div class="card-body">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h2 class="card-title">{{ horario.get_dia_semana_display }}</h2>
-                                <p class="text-lg font-mono">⏰ {{ horario.hora_inicio|time:"H:i" }} - {{ horario.hora_fin|time:"H:i" }}</p>
-                                {% if horario.entrenador %}
-                                    <p class="text-sm text-gray-600">👨‍🏫 {{ horario.entrenador.user.first_name }} {{ horario.entrenador.user.last_name }}</p>
-                                {% endif %}
-                                {% if horario.sala %}
-                                    <p class="text-sm text-gray-600">📍 Sala: {{ horario.sala }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="text-right">
-                                <div class="text-3xl font-bold">{{ horario.inscripciones.count }}/{{ actividad.capacidad_maxima }}</div>
-                                <p class="text-sm text-gray-600">Inscritos</p>
-                                {% if horario.inscripciones.count == actividad.capacidad_maxima %}
-                                    <span class="badge badge-error">Lleno</span>
-                                {% elif horario.inscripciones.count > actividad.capacidad_maxima|add:"-2" %}
-                                    <span class="badge badge-warning">Casi lleno</span>
-                                {% else %}
-                                    <span class="badge badge-success">Disponible</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="card-actions justify-end mt-4">
-                            {% if is_miembro and miembro_usuario %}
-                                <a href="{% url 'actividades:inscribir' %}?horario={{ horario.pk }}&miembro={{ miembro_usuario.pk }}" class="btn btn-sm btn-success">
-                                    {% if horario.inscripciones.count >= actividad.capacidad_maxima %}
-                                        Lleno
-                                    {% else %}
-                                        Inscribirse
-                                    {% endif %}
-                                </a>
-                            {% elif is_admin %}
-                                <a href="{% url 'actividades:inscripciones_horario' horario.pk %}" class="btn btn-sm btn-ghost">Ver Inscritos</a>
-                                <a href="{% url 'actividades:editar_horario' horario.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+                <div class="card hover:shadow-lg transition-shadow">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-2xl font-bold text-primary">{{ horario.get_dia_semana_display }}</h2>
+                            <p class="text-lg font-mono text-gray mt-2">⏰ {{ horario.hora_inicio|time:"H:i" }} - {{ horario.hora_fin|time:"H:i" }}</p>
+                            {% if horario.entrenador %}
+                                <p class="text-sm text-gray mt-2">👨‍🏫 {{ horario.entrenador.nombre }} {{ horario.entrenador.apellido }}</p>
+                            {% endif %}
+                            {% if horario.sala %}
+                                <p class="text-sm text-gray">📍 Sala: {{ horario.sala }}</p>
                             {% endif %}
                         </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-bold text-dark">{{ horario.inscripciones.count }}<span class="text-lg text-gray">/{{ actividad.capacidad_maxima }}</span></div>
+                            <p class="text-sm text-gray mt-1">Inscritos</p>
+                            {% if horario.inscripciones.count == actividad.capacidad_maxima %}
+                                <span class="badge badge-danger mt-2">Lleno</span>
+                            {% elif horario.inscripciones.count > actividad.capacidad_maxima|add:"-2" %}
+                                <span class="badge badge-warning mt-2">Casi lleno</span>
+                            {% else %}
+                                <span class="badge badge-success mt-2">Disponible</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 justify-end mt-6 border-t border-neutral-200 pt-4">
+                        {% if is_miembro and miembro_usuario %}
+                            <a href="{% url 'actividades:inscribir' %}?horario={{ horario.pk }}&miembro={{ miembro_usuario.pk }}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white text-sm hover:opacity-90 {% if horario.inscripciones.count >= actividad.capacidad_maxima %}opacity-50 cursor-not-allowed{% endif %}">
+                                {% if horario.inscripciones.count >= actividad.capacidad_maxima %}
+                                    Lleno
+                                {% else %}
+                                    Inscribirse
+                                {% endif %}
+                            </a>
+                        {% elif is_admin %}
+                            <a href="{% url 'actividades:inscripciones_horario' horario.pk %}" class="btn-ghost px-3 py-2 rounded-md text-sm hover:opacity-90">Ver Inscritos</a>
+                            <a href="{% url 'actividades:editar_horario' horario.pk %}" class="btn-ghost px-3 py-2 rounded-md text-sm hover:opacity-90">Editar</a>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
         <div class="alert alert-info">
-            <p>No hay horarios.
+            <p>ℹ️ No hay horarios disponibles.
                 {% if is_admin %}
-                    <a href="{% url 'actividades:crear_horario' %}" class="link">Crear uno</a>
+                    <a href="{% url 'actividades:crear_horario' %}" class="font-semibold text-info hover:underline">Crear uno</a>
                 {% endif %}
             </p>
         </div>

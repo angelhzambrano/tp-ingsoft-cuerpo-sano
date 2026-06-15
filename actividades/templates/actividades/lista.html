@@ -3,56 +3,54 @@
 {% block title %}Actividades{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-4">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">🏋️ Actividades</h1>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-bold text-primary">🏋️ Actividades</h1>
         {% if is_admin %}
-            <a href="{% url 'actividades:crear' %}" class="btn btn-primary">Nueva Actividad</a>
+            <a href="{% url 'actividades:crear' %}" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90">+ Nueva Actividad</a>
         {% endif %}
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% if actividades %}
             {% for actividad in actividades %}
-                <div class="card bg-base-100 shadow-md">
-                    <div class="card-body">
-                        <h2 class="card-title">{{ actividad.nombre }}</h2>
-                        {% if actividad.descripcion %}
-                            <p class="text-sm text-gray-600">{{ actividad.descripcion|truncatewords:15 }}</p>
-                        {% endif %}
-                        <div class="mt-2 space-y-1">
-                            <div class="text-sm">
-                                <span class="text-gray-600">Capacidad:</span>
-                                <span class="font-semibold">{{ actividad.capacidad_maxima }} personas</span>
-                            </div>
-                            <div class="text-sm">
-                                <span class="text-gray-600">Horarios:</span>
-                                <span class="font-semibold">{{ actividad.horarios.count }}</span>
-                            </div>
+                <div class="card hover:shadow-lg transition-shadow">
+                    <h2 class="card-title">{{ actividad.nombre }}</h2>
+                    {% if actividad.descripcion %}
+                        <p class="text-sm text-gray">{{ actividad.descripcion|truncatewords:15 }}</p>
+                    {% endif %}
+                    <div class="mt-4 space-y-2 border-t border-neutral-200 pt-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray">Capacidad</span>
+                            <span class="font-semibold text-dark">{{ actividad.capacidad_maxima }} personas</span>
                         </div>
-                        <div class="card-actions justify-end mt-4">
-                            <a href="{% url 'actividades:horarios_actividad' actividad.pk %}" class="btn btn-sm btn-ghost">Horarios</a>
-                            <a href="{% url 'actividades:detalle' actividad.pk %}" class="btn btn-sm btn-primary">Ver</a>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray">Horarios</span>
+                            <span class="font-semibold text-dark">{{ actividad.horarios.count }}</span>
                         </div>
+                    </div>
+                    <div class="mt-4 flex gap-2 justify-end">
+                        <a href="{% url 'actividades:horarios_actividad' actividad.pk %}" class="btn-ghost px-3 py-1.5 rounded-md text-sm hover:opacity-90">Horarios</a>
+                        <a href="{% url 'actividades:detalle' actividad.pk %}" class="btn-primary px-3 py-1.5 rounded-md text-sm text-white hover:opacity-90">Ver</a>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
             <div class="alert alert-info col-span-full">
-                <p>No hay actividades registradas.
+                <p>ℹ️ No hay actividades registradas.
                     {% if is_admin %}
-                        <a href="{% url 'actividades:crear' %}" class="link">Crear una</a>
+                        <a href="{% url 'actividades:crear' %}" class="font-semibold text-info hover:underline">Crear una</a>
                     {% endif %}
                 </p>
             </div>
         {% endif %}
     </div>
 
-    <div class="mt-6 flex justify-between items-center">
-        <div class="text-sm text-gray-600">
-            Total: <strong>{{ total }}</strong> actividad(es)
+    <div class="mt-8 flex justify-between items-center border-t border-neutral-200 pt-6">
+        <div class="text-sm text-gray">
+            Total: <strong class="text-dark">{{ total }}</strong> actividad(es)
         </div>
-        <a href="{% url 'actividades:lista_horarios' %}" class="btn btn-ghost btn-sm">Ver todos los horarios</a>
+        <a href="{% url 'actividades:lista_horarios' %}" class="btn-ghost px-4 py-2 rounded-md text-sm hover:opacity-90">Ver todos los horarios →</a>
     </div>
 </div>
 {% endblock %}
