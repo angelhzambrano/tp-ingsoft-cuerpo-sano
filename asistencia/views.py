@@ -132,3 +132,35 @@ def registro_manual(request):
     miembros = Miembro.objects.filter(activo=True)
     context = {'miembros': miembros}
     return render(request, 'asistencia/registro_manual.html', context)
+
+
+@login_required
+def mi_asistencia_miembro(request):
+    """Vista personal de asistencia del miembro logueado"""
+    try:
+        miembro = request.user.miembro
+    except Miembro.DoesNotExist:
+        return render(request, 'asistencia/sin_asignacion_miembro.html', {
+            'mensaje': 'No estás registrado como miembro en el sistema'
+        })
+
+    asistencias = miembro.asistencias.all().order_by('-fecha', '-hora')
+
+    stats = {
+        'total': asistencias.count(),
+        'barcode': asistencias.filter(metodo='BARCODE').count(),
+        'manual': asistencias.filter(metodo='MANUAL').count(),
+    }
+
+    # Membresía actual
+    membresia_actual = Membresia.objects.filter(
+        miembro=miembro,
+        estado='ACTIVA'
+    ).first()
+
+    return render(request, 'asistencia/mi_asistencia_miembro.html', {
+        'miembro': miembro,
+        'asistencias': asistencias,
+        'stats': stats,
+        'membresia': membresia_actual
+    })

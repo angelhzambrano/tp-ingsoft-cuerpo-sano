@@ -24,6 +24,7 @@
                 {% if user.groups.all|length > 0 %}
                     <div class="divider divider-horizontal mx-2 bg-white/20 h-6"></div>
                     {% if user|has_group:"Admin" %}
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded text-white mr-2">ADMIN</span>
                         <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
                         <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🎟️ Membresías</a>
                         <a href="{% url 'asistencia:biometrico' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
@@ -31,11 +32,17 @@
                         <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
                         <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📊 Reportes</a>
                     {% elif user|has_group:"Recepcion" %}
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded text-white mr-2">RECEPCIÓN</span>
                         <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
                         <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
                         <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
                     {% elif user|has_group:"Entrenador" %}
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded text-white mr-2">ENTRENADOR</span>
                         <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📋 Mi Asistencia</a>
+                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
+                    {% elif user|has_group:"Miembro" %}
+                        <span class="text-xs bg-white/20 px-2 py-1 rounded text-white mr-2">MIEMBRO</span>
+                        <a href="{% url 'asistencia:mi_asistencia' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Mi Asistencia</a>
                         <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
                     {% endif %}
                 {% endif %}
