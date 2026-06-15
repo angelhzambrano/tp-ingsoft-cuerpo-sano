@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.db import connection
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.shortcuts import redirect
 
 
@@ -11,6 +12,11 @@ def healthz(request):
         return JsonResponse({'status': 'ok', 'db': 'connected'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'detail': str(e)}, status=503)
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect('login')
 
 
 @login_required
