@@ -107,17 +107,30 @@ class Command(BaseCommand):
 
         self.stdout.write(f'  {status}: Entrenador Principal → entrenador')
 
-        # 5. Crear actividades
-        self.stdout.write('\n🏃 Creando actividades...')
+        # 5. Crear actividades CON sus horarios
+        self.stdout.write('\n🏃 Creando actividades con horarios...')
         actividades_data = [
-            ('Spinning', 'Clases de ciclismo indoor de alta intensidad', 20),
-            ('Yoga', 'Clases de yoga para relajación y flexibilidad', 15),
-            ('Pilates', 'Ejercicios de pilates para core y postura', 12),
-            ('Pesas', 'Entrenamiento con pesas y resistencia', 25),
+            ('Spinning', 'Clases de ciclismo indoor de alta intensidad', 20, [
+                ('LUN', '07:00', '08:00'),
+                ('MIE', '18:30', '19:30'),
+            ]),
+            ('Yoga', 'Clases de yoga para relajación y flexibilidad', 15, [
+                ('MAR', '09:00', '10:30'),
+                ('JUE', '18:00', '19:30'),
+            ]),
+            ('Pilates', 'Ejercicios de pilates para core y postura', 12, [
+                ('LUN', '10:00', '11:00'),
+                ('VIE', '15:00', '16:00'),
+            ]),
+            ('Pesas', 'Entrenamiento con pesas y resistencia', 25, [
+                ('MAR', '06:00', '07:00'),
+                ('SAB', '10:00', '11:30'),
+            ]),
         ]
 
         actividades = {}
-        for nombre, desc, capacidad in actividades_data:
+        horarios_total = 0
+        for nombre, desc, capacidad, horarios in actividades_data:
             act, created = Actividad.objects.get_or_create(
                 nombre=nombre,
                 defaults={'descripcion': desc, 'capacidad_maxima': capacidad}
@@ -126,41 +139,26 @@ class Command(BaseCommand):
             status = '✓ nueva' if created else '→ existe'
             self.stdout.write(f'  {status}: {nombre}')
 
-        # 6. Crear horarios de clases
-        self.stdout.write('\n📅 Creando horarios...')
-        horarios_data = [
-            ('Spinning', 'LUN', '07:00', '08:00'),
-            ('Spinning', 'MIE', '18:30', '19:30'),
-            ('Yoga', 'MAR', '09:00', '10:30'),
-            ('Yoga', 'JUE', '18:00', '19:30'),
-            ('Pilates', 'LUN', '10:00', '11:00'),
-            ('Pilates', 'VIE', '15:00', '16:00'),
-            ('Pesas', 'MAR', '06:00', '07:00'),
-            ('Pesas', 'SAB', '10:00', '11:30'),
-        ]
+            # Crear horarios para esta actividad
+            for dia, h_inicio_str, h_fin_str in horarios:
+                h_inicio = time(*map(int, h_inicio_str.split(':')))
+                h_fin = time(*map(int, h_fin_str.split(':')))
 
-        horarios_count = 0
-        for actividad_name, dia, h_inicio_str, h_fin_str in horarios_data:
-            actividad = actividades[actividad_name]
-            # Convertir strings a objetos time
-            h_inicio = time(*map(int, h_inicio_str.split(':')))
-            h_fin = time(*map(int, h_fin_str.split(':')))
+                horario, created = HorarioClase.objects.get_or_create(
+                    actividad=act,
+                    dia_semana=dia,
+                    hora_inicio=h_inicio,
+                    hora_fin=h_fin,
+                    defaults={
+                        'entrenador': entrenador,
+                        'sala': f'Sala {nombre}',
+                    }
+                )
+                if created:
+                    horarios_total += 1
+                    self.stdout.write(f'      📅 {dia} {h_inicio_str}-{h_fin_str}')
 
-            horario, created = HorarioClase.objects.get_or_create(
-                actividad=actividad,
-                dia_semana=dia,
-                hora_inicio=h_inicio,
-                hora_fin=h_fin,
-                defaults={
-                    'entrenador': entrenador,
-                    'sala': f'Sala {actividad_name}',
-                }
-            )
-            if created:
-                horarios_count += 1
-                self.stdout.write(f'    ✓ {actividad_name} - {dia} {h_inicio_str}-{h_fin_str}')
-
-        self.stdout.write(f'  Total: {horarios_count} horarios nuevos')
+        self.stdout.write(f'  ✓ {horarios_total} horarios creados')
 
         # 7. Crear tipos de membresía
         self.stdout.write('\n💳 Creando tipos de membresía...')
