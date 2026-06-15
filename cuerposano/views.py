@@ -33,6 +33,27 @@ def test_template(request):
         }, status=500)
 
 
+def setup(request):
+    """Setup test data - visita una sola vez para crear usuarios y datos de prueba"""
+    from django.core.management import call_command
+    from io import StringIO
+
+    out = StringIO()
+    try:
+        call_command('setup_test_data', stdout=out, stderr=out)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Setup completado',
+            'output': out.getvalue()
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e),
+            'output': out.getvalue()
+        }, status=500)
+
+
 def healthz(request):
     try:
         with connection.cursor() as cursor:
