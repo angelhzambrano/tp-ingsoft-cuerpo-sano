@@ -1,0 +1,264 @@
+/* Cuerpo Sano - Design System Colors & Styles */
+
+:root {
+  /* Primary Colors */
+  --primary: #0D9488;
+  --primary-dark: #0D7377;
+  --primary-light: #14B8A6;
+
+  /* Semantic Colors */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #3B82F6;
+
+  /* Neutrals */
+  --dark: #1F2937;
+  --dark-secondary: #4B5563;
+  --light: #F3F4F6;
+  --light-secondary: #E5E7EB;
+  --gray: #9CA3AF;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Styles */
+body {
+  background-color: var(--light);
+  color: var(--dark);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--dark-secondary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--light-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background-color: var(--light);
+  border-color: var(--gray);
+}
+
+/* Cards */
+.card {
+  background-color: white;
+  border: 1px solid #E5E7EB;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: var(--spacing-md);
+}
+
+.card-body {
+  padding: 0;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-primary {
+  background-color: rgba(13, 148, 136, 0.1);
+  color: var(--primary);
+}
+
+.badge-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  color: var(--dark-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--light-secondary);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+/* Alert */
+.alert {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #1E40AF;
+  border-left: 4px solid #3B82F6;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #065F46;
+  border-left: 4px solid var(--success);
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #78350F;
+  border-left: 4px solid var(--warning);
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #7F1D1D;
+  border-left: 4px solid var(--danger);
+}
+
+/* Typography */
+.text-primary {
+  color: var(--primary);
+}
+
+.text-secondary {
+  color: var(--dark-secondary);
+}
+
+.text-muted {
+  color: var(--gray);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Utilities */
+.rounded {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+.shadow {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
