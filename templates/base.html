@@ -12,13 +12,30 @@
             body { font-size: 12pt; }
         }
 
-        /* Navbar links - High contrast */
-        nav a {
+        /* Navbar - Dark Teal with High Contrast */
+        nav {
+            background-color: #0D7377 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        nav a, nav button {
             color: #ffffff !important;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         nav a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.12);
+            color: #ffffff !important;
+        }
+
+        nav button {
+            background-color: #ffffff !important;
+            color: #0D7377 !important;
+        }
+
+        nav button:hover {
+            opacity: 0.9;
         }
 
         /* Dropdown toggle - Click based */
