@@ -21,6 +21,18 @@ def ping(request):
     return JsonResponse({'status': 'alive', 'message': 'WSGI is running'})
 
 
+def test_template(request):
+    """Test basic template rendering"""
+    try:
+        return render(request, 'registration/login.html', {})
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'error': str(e),
+            'type': type(e).__name__
+        }, status=500)
+
+
 def healthz(request):
     try:
         with connection.cursor() as cursor:
