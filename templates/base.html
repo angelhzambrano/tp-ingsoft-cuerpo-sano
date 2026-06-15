@@ -1,10 +1,11 @@
-{% load custom_tags %}<!DOCTYPE html>
+{% load custom_tags %}{% load static %}<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Cuerpo Sano{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
     <style>
         @media print {
             nav, .no-print { display: none !important; }
@@ -16,46 +17,49 @@
 <body>
     <div class="min-h-screen flex flex-col">
         {% if user.is_authenticated %}
-        <nav class="navbar bg-gradient-to-r from-indigo-600 to-blue-600 shadow-lg text-white">
-            <div class="flex-1">
-                <a href="/" class="btn btn-ghost text-xl font-bold text-white hover:bg-white/10">
-                    💪 Cuerpo Sano
-                </a>
-                {% if user.groups.all|length > 0 %}
-                    <div class="divider divider-horizontal mx-2 bg-white/20 h-6"></div>
-                    {% if user|has_group:"Admin" %}
-                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
-                        <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🎟️ Membresías</a>
-                        <a href="{% url 'asistencia:biometrico' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
-                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
-                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
-                        <a href="{% url 'reportes:asistencias' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📊 Reportes</a>
-                    {% elif user|has_group:"Recepcion" %}
-                        <a href="{% url 'asistencia:registro' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Asistencia</a>
-                        <a href="{% url 'miembros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">👥 Miembros</a>
-                        <a href="{% url 'cobros:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">💳 Cobros</a>
-                    {% elif user|has_group:"Entrenador" %}
-                        <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📋 Mi Asistencia</a>
-                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
-                    {% elif user|has_group:"Miembro" %}
-                        <a href="{% url 'asistencia:mi_asistencia' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">📱 Mi Asistencia</a>
-                        <a href="{% url 'actividades:lista' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">🏋️ Actividades</a>
-                    {% endif %}
-                {% endif %}
-            </div>
-            <div class="flex-none gap-4">
-                <div class="dropdown dropdown-end">
-                    <button class="btn btn-circle btn-ghost avatar placeholder border border-white/30">
-                        <div class="bg-white text-indigo-600 w-10 rounded-full flex items-center justify-center font-bold">
-                            {{ user.username|first|upper }}
+        <nav class="bg-primary shadow-lg text-white">
+            <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <a href="/" class="text-2xl font-bold text-white hover:opacity-90 transition">
+                        💪 Cuerpo Sano
+                    </a>
+
+                    {% if user.groups.all|length > 0 %}
+                        <div class="hidden md:flex gap-2">
+                            {% if user|has_group:"Admin" %}
+                                <a href="{% url 'miembros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">👥 Miembros</a>
+                                <a href="{% url 'membresias:lista_tipos' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🎟️ Membresías</a>
+                                <a href="{% url 'asistencia:biometrico' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📱 Asistencia</a>
+                                <a href="{% url 'actividades:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🏋️ Actividades</a>
+                                <a href="{% url 'cobros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">💳 Cobros</a>
+                                <a href="{% url 'reportes:asistencias' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📊 Reportes</a>
+                            {% elif user|has_group:"Recepcion" %}
+                                <a href="{% url 'asistencia:registro' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📱 Asistencia</a>
+                                <a href="{% url 'miembros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">👥 Miembros</a>
+                                <a href="{% url 'cobros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">💳 Cobros</a>
+                            {% elif user|has_group:"Entrenador" %}
+                                <a href="{% url 'entrenadores:asistencia' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📋 Mi Asistencia</a>
+                                <a href="{% url 'actividades:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🏋️ Actividades</a>
+                            {% elif user|has_group:"Miembro" %}
+                                <a href="{% url 'asistencia:mi_asistencia' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📱 Mi Asistencia</a>
+                                <a href="{% url 'actividades:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🏋️ Actividades</a>
+                            {% endif %}
                         </div>
-                    </button>
-                    <ul class="dropdown-content z-[1] menu p-2 shadow bg-white rounded-box w-52 text-gray-800">
-                        {% if user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">⚙️ Admin</a></li>
-                        {% endif %}
-                        <li><a href="{% url 'logout' %}">🚪 Cerrar sesión</a></li>
-                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="relative group">
+                        <button class="w-10 h-10 rounded-full bg-white text-primary font-bold text-center text-sm hover:opacity-90 transition">
+                            {{ user.username|first|upper }}
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white text-dark rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition z-50">
+                            {% if user.is_staff %}
+                            <a href="{% url 'admin:index' %}" class="block px-4 py-2 hover:bg-light rounded-t-lg">⚙️ Admin</a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-light rounded-b-lg">🚪 Cerrar sesión</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -63,10 +67,10 @@
 
         <main class="flex-1 container mx-auto px-4 py-8">
             {% if messages %}
-            <div class="mb-4">
+            <div class="mb-4 space-y-2">
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} mb-2">
-                    <div>{{ message }}</div>
+                <div class="alert alert-{{ message.tags|default:'info' }}">
+                    <p>{{ message }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -75,8 +79,8 @@
             {% block content %}{% endblock %}
         </main>
 
-        <footer class="bg-base-200 text-center py-4 text-sm">
-            Cuerpo Sano &copy; 2026
+        <footer class="bg-neutral-100 text-center py-6 text-sm text-neutral-600 border-t border-neutral-200">
+            <p>💪 Cuerpo Sano &copy; 2026</p>
         </footer>
     </div>
 

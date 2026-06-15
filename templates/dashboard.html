@@ -6,25 +6,25 @@
 <div class="container mx-auto px-4 py-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">
+        <h1 class="text-4xl font-bold text-primary">
             {% if is_admin %}⚙️ Dashboard Admin{% elif is_recepcion %}🎫 Recepción{% elif is_entrenador %}🏋️ Entrenador{% elif is_miembro %}👤 Mi Dashboard{% endif %}
         </h1>
     </div>
 
     {% if sin_asignacion %}
     <!-- No asignado -->
-    <div class="card bg-yellow-50 shadow-lg border-2 border-yellow-200">
-        <div class="card-body text-center p-8">
+    <div class="card border-l-4 border-warning">
+        <div class="card-body text-center py-12">
             <div class="text-5xl mb-4">⚠️</div>
-            <h2 class="text-2xl font-bold text-yellow-900 mb-2">No registrado en el sistema</h2>
-            <p class="text-yellow-800 mb-4">
+            <h2 class="text-2xl font-bold text-dark mb-2">No registrado en el sistema</h2>
+            <p class="text-gray mb-4">
                 {% if is_entrenador %}
                     Tu cuenta no está vinculada a un registro de entrenador.
                 {% elif is_miembro %}
                     Tu cuenta no está vinculada a un registro de miembro.
                 {% endif %}
             </p>
-            <p class="text-sm text-yellow-700">Contacta al administrador para completar tu registro.</p>
+            <p class="text-sm text-gray">Contacta al administrador para completar tu registro.</p>
         </div>
     </div>
 
@@ -32,88 +32,63 @@
     <!-- ADMIN Dashboard -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Miembros -->
-        <div class="card bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg border border-blue-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'miembros:lista' %}'">
-            <div class="card-body p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-blue-600">MIEMBROS</p>
-                        <p class="text-4xl font-bold text-blue-900 mt-2">{{ stats.miembros }}</p>
-                    </div>
-                    <div class="text-4xl">👥</div>
+        <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'miembros:lista' %}'">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-primary">👥 MIEMBROS</p>
+                    <p class="text-4xl font-bold text-dark mt-3">{{ stats.miembros }}</p>
                 </div>
-                <p class="text-sm text-blue-700 mt-4">Gestionar membresías y carnets</p>
             </div>
+            <p class="text-sm text-gray mt-4">Gestionar membresías y carnets</p>
         </div>
 
         <!-- Entrenadores -->
-        <div class="card bg-gradient-to-br from-purple-50 to-purple-100 shadow-lg border border-purple-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'entrenadores:lista' %}'">
-            <div class="card-body p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-purple-600">ENTRENADORES</p>
-                        <p class="text-4xl font-bold text-purple-900 mt-2">{{ stats.entrenadores }}</p>
-                    </div>
-                    <div class="text-4xl">🏋️</div>
+        <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'entrenadores:lista' %}'">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-primary">🏋️ ENTRENADORES</p>
+                    <p class="text-4xl font-bold text-dark mt-3">{{ stats.entrenadores }}</p>
                 </div>
-                <p class="text-sm text-purple-700 mt-4">Gestionar equipo</p>
             </div>
+            <p class="text-sm text-gray mt-4">Gestionar equipo</p>
         </div>
 
         <!-- Activos -->
-        <div class="card bg-gradient-to-br from-green-50 to-green-100 shadow-lg border border-green-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'reportes:asistencias' %}'">
-            <div class="card-body p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-green-600">ACTIVOS HOY</p>
-                        <p class="text-4xl font-bold text-green-900 mt-2">{{ stats.activos }}</p>
-                    </div>
-                    <div class="text-4xl">✓</div>
+        <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'reportes:asistencias' %}'">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-success">✓ ACTIVOS HOY</p>
+                    <p class="text-4xl font-bold text-dark mt-3">{{ stats.activos }}</p>
                 </div>
-                <p class="text-sm text-green-700 mt-4">Ver reportes detallados</p>
             </div>
+            <p class="text-sm text-gray mt-4">Ver reportes detallados</p>
         </div>
     </div>
 
     <!-- Accesos rápidos -->
-    <div class="card bg-white shadow-lg border border-gray-100">
-        <div class="card-body p-6">
-            <h2 class="card-title text-lg mb-4">📋 Acciones rápidas</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <a href="{% url 'miembros:crear' %}" class="btn btn-sm btn-primary">+ Nuevo Miembro</a>
-                <a href="{% url 'entrenadores:crear' %}" class="btn btn-sm btn-primary">+ Entrenador</a>
-                <a href="{% url 'membresias:lista_tipos' %}" class="btn btn-sm btn-secondary">💳 Membresías</a>
-                <a href="{% url 'reportes:asistencias' %}" class="btn btn-sm btn-info">📊 Reportes</a>
-            </div>
+    <div class="card">
+        <h2 class="card-title mb-4">📋 Acciones rápidas</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <a href="{% url 'miembros:crear' %}" class="btn-primary inline-block px-3 py-2 rounded-md font-semibold text-white text-center text-sm hover:opacity-90">+ Nuevo Miembro</a>
+            <a href="{% url 'entrenadores:crear' %}" class="btn-primary inline-block px-3 py-2 rounded-md font-semibold text-white text-center text-sm hover:opacity-90">+ Entrenador</a>
+            <a href="{% url 'membresias:lista_tipos' %}" class="btn-secondary inline-block px-3 py-2 rounded-md font-semibold text-center text-sm">💳 Membresías</a>
+            <a href="{% url 'reportes:asistencias' %}" class="btn-secondary inline-block px-3 py-2 rounded-md font-semibold text-center text-sm">📊 Reportes</a>
         </div>
     </div>
 
     {% elif is_recepcion %}
     <!-- RECEPCION Dashboard -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="card bg-gradient-to-br from-indigo-50 to-indigo-100 shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'asistencia:registro' %}'">
-            <div class="card-body p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-indigo-600">ASISTENCIA</p>
-                        <p class="text-3xl font-bold text-indigo-900 mt-2">Registrar</p>
-                    </div>
-                    <div class="text-4xl">📱</div>
-                </div>
-                <p class="text-sm text-indigo-700 mt-4">Registrar entrada de miembros</p>
-            </div>
+        <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'asistencia:registro' %}'">
+            <p class="text-sm font-semibold text-primary">📱 ASISTENCIA</p>
+            <p class="text-3xl font-bold text-dark mt-4">Registrar</p>
+            <p class="text-sm text-gray mt-4">Registrar entrada de miembros</p>
         </div>
 
-        <div class="card bg-gradient-to-br from-orange-50 to-orange-100 shadow-lg border border-orange-200 hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='{% url 'cobros:lista' %}'">
-            <div class="card-body p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm font-semibold text-orange-600">COBROS</p>
-                        <p class="text-3xl font-bold text-orange-900 mt-2">Gestionar</p>
-                    </div>
-                    <div class="text-4xl">💳</div>
-                </div>
-                <p class="text-sm text-orange-700 mt-4">Procesar pagos</p>
-            </div>
+        <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'cobros:lista' %}'">
+            <p class="text-sm font-semibold text-primary">💳 COBROS</p>
+            <p class="text-3xl font-bold text-dark mt-4">Gestionar</p>
+            <p class="text-sm text-gray mt-4">Procesar pagos</p>
         </div>
     </div>
 
@@ -122,39 +97,35 @@
     {% if entrenador %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Perfil -->
-        <div class="card bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg border border-blue-200">
-            <div class="card-body p-6">
-                <p class="text-sm font-semibold text-blue-600">MI PERFIL</p>
-                <h2 class="text-2xl font-bold text-gray-900 mt-2">{{ entrenador.nombre }} {{ entrenador.apellido }}</h2>
-                <div class="mt-4 space-y-2 text-sm text-gray-700">
-                    <p>🎓 {{ entrenador.especialidad }}</p>
-                    <p>📞 {{ entrenador.telefono }}</p>
-                </div>
-                <div class="mt-6">
-                    <a href="{% url 'entrenadores:asistencia' %}" class="btn btn-sm btn-primary w-full">📋 Mi Asistencia</a>
-                </div>
+        <div class="card">
+            <p class="text-sm font-semibold text-primary">👨‍🏫 MI PERFIL</p>
+            <h2 class="text-2xl font-bold text-dark mt-3">{{ entrenador.nombre }} {{ entrenador.apellido }}</h2>
+            <div class="mt-4 space-y-2 text-sm text-gray">
+                <p>🎓 {{ entrenador.especialidad }}</p>
+                <p>📞 {{ entrenador.telefono }}</p>
+            </div>
+            <div class="mt-6">
+                <a href="{% url 'entrenadores:asistencia' %}" class="btn-primary w-full inline-block px-4 py-2 rounded-md font-semibold text-white text-center hover:opacity-90">📋 Mi Asistencia</a>
             </div>
         </div>
 
         <!-- Clases Asignadas -->
-        <div class="card bg-gradient-to-r from-purple-50 to-purple-100 shadow-lg border border-purple-200">
-            <div class="card-body p-6">
-                <p class="text-sm font-semibold text-purple-600">MIS CLASES</p>
-                {% if clases_asignadas %}
-                    <p class="text-3xl font-bold text-purple-900 mt-2">{{ clases_asignadas|length }}</p>
-                    <div class="mt-4 space-y-2 text-sm text-gray-700">
-                        {% for horario in clases_asignadas|slice:":3" %}
-                            <p>📅 {{ horario.actividad.nombre }} - {{ horario.get_dia_semana_display }} {{ horario.hora_inicio|time:"H:i" }}</p>
-                        {% endfor %}
-                        {% if clases_asignadas|length > 3 %}
-                            <p class="text-xs text-gray-600 mt-2">+{{ clases_asignadas|length|add:"-3" }} más</p>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <p class="text-lg font-bold text-purple-900 mt-2">Sin clases asignadas</p>
-                    <p class="text-sm text-purple-700 mt-2">Contacta al administrador para recibir asignaciones</p>
-                {% endif %}
-            </div>
+        <div class="card">
+            <p class="text-sm font-semibold text-primary">🏋️ MIS CLASES</p>
+            {% if clases_asignadas %}
+                <p class="text-3xl font-bold text-dark mt-3">{{ clases_asignadas|length }}</p>
+                <div class="mt-4 space-y-2 text-sm text-gray">
+                    {% for horario in clases_asignadas|slice:":3" %}
+                        <p>📅 {{ horario.actividad.nombre }} - {{ horario.get_dia_semana_display }} {{ horario.hora_inicio|time:"H:i" }}</p>
+                    {% endfor %}
+                    {% if clases_asignadas|length > 3 %}
+                        <p class="text-xs text-gray mt-2">+{{ clases_asignadas|length|add:"-3" }} más</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-lg font-bold text-dark mt-3">Sin clases asignadas</p>
+                <p class="text-sm text-gray mt-2">Contacta al administrador para recibir asignaciones</p>
+            {% endif %}
         </div>
     </div>
     {% endif %}
@@ -164,80 +135,72 @@
     {% if miembro %}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Perfil -->
-        <div class="card bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg border border-blue-200">
-            <div class="card-body p-6">
-                <p class="text-sm font-semibold text-blue-600">MI PERFIL</p>
-                <h2 class="text-2xl font-bold text-gray-900 mt-2">{{ miembro.nombre }} {{ miembro.apellido }}</h2>
-                <div class="mt-4 space-y-2 text-sm text-gray-700">
-                    <p>🆔 {{ miembro.dni }}</p>
-                    <p>📧 {{ miembro.email }}</p>
-                    <p>🏷️ <span class="badge badge-sm badge-info">{{ miembro.get_tipo_miembro_display }}</span></p>
-                </div>
-                <div class="mt-6">
-                    <a href="{% url 'asistencia:mi_asistencia' %}" class="btn btn-sm btn-primary w-full">📱 Mi Asistencia</a>
-                </div>
+        <div class="card">
+            <p class="text-sm font-semibold text-primary">👤 MI PERFIL</p>
+            <h2 class="text-2xl font-bold text-dark mt-3">{{ miembro.nombre }} {{ miembro.apellido }}</h2>
+            <div class="mt-4 space-y-2 text-sm text-gray">
+                <p>🆔 {{ miembro.dni }}</p>
+                <p>📧 {{ miembro.email }}</p>
+                <p>🏷️ <span class="badge badge-primary">{{ miembro.get_tipo_miembro_display }}</span></p>
+            </div>
+            <div class="mt-6">
+                <a href="{% url 'asistencia:mi_asistencia' %}" class="btn-primary w-full inline-block px-4 py-2 rounded-md font-semibold text-white text-center hover:opacity-90">📱 Mi Asistencia</a>
             </div>
         </div>
 
         <!-- Membresía -->
-        <div class="card {% if membresia %}bg-gradient-to-r from-green-50 to-green-100 border border-green-200{% else %}bg-gradient-to-r from-red-50 to-red-100 border border-red-200{% endif %} shadow-lg">
-            <div class="card-body p-6">
-                <p class="text-sm font-semibold {% if membresia %}text-green-600{% else %}text-red-600{% endif %}">MEMBRESÍA</p>
-                {% if membresia %}
-                    <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ membresia.tipo.nombre }}</h3>
-                    <div class="mt-4 space-y-2 text-sm text-gray-700">
-                        <p>✓ ACTIVA</p>
-                        <p class="text-xs text-gray-600 mt-2">Hasta: {{ membresia.fecha_fin|date:"d/m/Y" }}</p>
-                    </div>
-                {% else %}
-                    <p class="text-lg font-bold text-red-600 mt-2">Sin membresía activa</p>
-                    <p class="text-sm text-red-700 mt-4">Renueva tu membresía en recepción</p>
-                {% endif %}
-            </div>
+        <div class="card {% if membresia %}border-l-4 border-success{% else %}border-l-4 border-danger{% endif %}">
+            <p class="text-sm font-semibold {% if membresia %}text-success{% else %}text-danger{% endif %}">💳 MEMBRESÍA</p>
+            {% if membresia %}
+                <h3 class="text-2xl font-bold text-dark mt-3">{{ membresia.tipo.nombre }}</h3>
+                <div class="mt-4 space-y-2 text-sm text-gray">
+                    <p>✓ ACTIVA</p>
+                    <p class="text-xs mt-2">Hasta: {{ membresia.fecha_fin|date:"d/m/Y" }}</p>
+                </div>
+            {% else %}
+                <p class="text-lg font-bold text-danger mt-3">Sin membresía activa</p>
+                <p class="text-sm text-gray mt-2">Renueva tu membresía en recepción</p>
+            {% endif %}
         </div>
     </div>
 
     <!-- Próxima clase -->
     {% if proxima_clase %}
-    <div class="card bg-gradient-to-r from-orange-50 to-orange-100 shadow-lg border border-orange-200 mb-8">
-        <div class="card-body p-6">
-            <p class="text-sm font-semibold text-orange-600">⏰ PRÓXIMA CLASE</p>
-            <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ proxima_clase.horario.actividad.nombre }}</h3>
-            <div class="mt-4 space-y-2 text-sm text-gray-700">
-                <p>📅 {{ proxima_clase.horario.get_dia_semana_display }}</p>
-                <p>🕐 {{ proxima_clase.horario.hora_inicio|time:"H:i" }} - {{ proxima_clase.horario.hora_fin|time:"H:i" }}</p>
-                {% if proxima_clase.horario.entrenador %}
-                    <p>👨‍🏫 {{ proxima_clase.horario.entrenador.nombre }} {{ proxima_clase.horario.entrenador.apellido }}</p>
-                {% endif %}
-                {% if proxima_clase.horario.sala %}
-                    <p>📍 Sala: {{ proxima_clase.horario.sala }}</p>
-                {% endif %}
-            </div>
+    <div class="card border-l-4 border-warning mb-8">
+        <p class="text-sm font-semibold text-warning">⏰ PRÓXIMA CLASE</p>
+        <h3 class="text-2xl font-bold text-dark mt-3">{{ proxima_clase.horario.actividad.nombre }}</h3>
+        <div class="mt-4 space-y-2 text-sm text-gray">
+            <p>📅 {{ proxima_clase.horario.get_dia_semana_display }}</p>
+            <p>🕐 {{ proxima_clase.horario.hora_inicio|time:"H:i" }} - {{ proxima_clase.horario.hora_fin|time:"H:i" }}</p>
+            {% if proxima_clase.horario.entrenador %}
+                <p>👨‍🏫 {{ proxima_clase.horario.entrenador.nombre }} {{ proxima_clase.horario.entrenador.apellido }}</p>
+            {% endif %}
+            {% if proxima_clase.horario.sala %}
+                <p>📍 Sala: {{ proxima_clase.horario.sala }}</p>
+            {% endif %}
         </div>
     </div>
     {% endif %}
 
     <!-- Mis inscripciones -->
     {% if inscripciones %}
-    <div class="card bg-white shadow-lg border border-gray-100 mb-8">
-        <div class="card-body p-6">
-            <h2 class="card-title text-lg mb-4">📚 Mis Inscripciones</h2>
-            <div class="space-y-3">
-                {% for inscripcion in inscripciones %}
-                    <div class="border border-gray-200 rounded p-3 hover:bg-gray-50">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="font-semibold text-gray-900">{{ inscripcion.horario.actividad.nombre }}</p>
-                                <p class="text-sm text-gray-600">{{ inscripcion.horario.get_dia_semana_display }} - {{ inscripcion.horario.hora_inicio|time:"H:i" }}</p>
-                                {% if inscripcion.horario.entrenador %}
-                                    <p class="text-xs text-gray-500">Con: {{ inscripcion.horario.entrenador.nombre }}</p>
-                                {% endif %}
-                            </div>
-                            <span class="badge badge-sm badge-success">{{ inscripcion.get_estado_display }}</span>
+    <div class="card mb-8">
+        <h2 class="card-title mb-4">📚 Mis Inscripciones</h2>
+        <div class="space-y-3">
+            {% for inscripcion in inscripciones %}
+                <div class="border border-neutral-200 rounded-lg p-3 hover:bg-light transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold text-dark">{{ inscripcion.horario.actividad.nombre }}</p>
+                            <p class="text-sm text-gray">{{ inscripcion.horario.get_dia_semana_display }} - {{ inscripcion.horario.hora_inicio|time:"H:i" }}</p>
+                            {% if inscripcion.horario.entrenador %}
+                                <p class="text-xs text-gray">Con: {{ inscripcion.horario.entrenador.nombre }}</p>
+                            {% endif %}
                         </div>
+                        <span class="badge badge-success">{{ inscripcion.get_estado_display }}</span>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
     {% else %}
@@ -247,13 +210,11 @@
     {% endif %}
 
     <!-- Actividades disponibles -->
-    <div class="card bg-white shadow-lg border border-gray-100" onclick="window.location='{% url 'actividades:lista' %}'">
-        <div class="card-body p-6">
-            <h2 class="card-title text-lg mb-4">🏋️ Actividades disponibles</h2>
-            <p class="text-gray-600">Explorar clases y horarios</p>
-            <div class="mt-4">
-                <a href="{% url 'actividades:lista' %}" class="btn btn-outline btn-primary btn-sm">Ver más →</a>
-            </div>
+    <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="window.location='{% url 'actividades:lista' %}'">
+        <h2 class="card-title mb-4">🏋️ Actividades disponibles</h2>
+        <p class="text-gray">Explorar clases y horarios</p>
+        <div class="mt-4">
+            <a href="{% url 'actividades:lista' %}" class="text-primary hover:text-primary-dark font-semibold">Ver más →</a>
         </div>
     </div>
     {% endif %}
