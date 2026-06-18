@@ -93,9 +93,10 @@
                         <div class="hidden md:flex gap-2">
                             {% if user|has_group:"Admin" %}
                                 <a href="{% url 'miembros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">👥 Miembros</a>
+                                <a href="{% url 'entrenadores:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🏋️ Entrenadores</a>
                                 <a href="{% url 'membresias:lista_tipos' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🎟️ Membresías</a>
                                 <a href="{% url 'asistencia:biometrico' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📱 Asistencia</a>
-                                <a href="{% url 'actividades:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">🏋️ Actividades</a>
+                                <a href="{% url 'actividades:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">💪 Actividades</a>
                                 <a href="{% url 'cobros:lista' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">💳 Cobros</a>
                                 <a href="{% url 'reportes:asistencias' %}" class="px-3 py-2 rounded-md text-sm hover:bg-primary-dark transition">📊 Reportes</a>
                             {% elif user|has_group:"Recepcion" %}
@@ -118,11 +119,11 @@
                         <button id="dropdown-btn" class="w-10 h-10 rounded-full bg-white text-primary font-bold text-center text-sm hover:opacity-90 transition cursor-pointer">
                             {{ user.username|first|upper }}
                         </button>
-                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50">
+                        <div id="dropdown-menu" class="dropdown-menu absolute right-0 mt-2 w-48 rounded-lg shadow-lg z-50" style="background-color: #0D7377;">
                             {% if user.is_staff %}
-                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 hover:bg-gray-100 rounded-t-lg border-b border-neutral-200 transition" style="color: #000000; font-weight: 600; text-decoration: none;">⚙️ Admin</a>
+                            <a href="{% url 'admin:index' %}" class="block px-4 py-3 rounded-t-lg border-b transition" style="color: #ffffff; font-weight: 600; text-decoration: none; border-color: rgba(255,255,255,0.2); background-color: transparent;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">⚙️ Admin</a>
                             {% endif %}
-                            <a href="{% url 'logout' %}" class="block px-4 py-3 hover:bg-gray-100 {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg transition" style="color: #000000; font-weight: 600; text-decoration: none;">🚪 Cerrar sesión</a>
+                            <a href="{% url 'logout' %}" class="block px-4 py-3 {% if not user.is_staff %}rounded-t-lg{% endif %} rounded-b-lg transition" style="color: #ffffff; font-weight: 600; text-decoration: none; background-color: transparent;" onmouseover="this.style.backgroundColor='rgba(255,255,255,0.1)'" onmouseout="this.style.backgroundColor='transparent'">🚪 Cerrar sesión</a>
                         </div>
                     </div>
                 </div>

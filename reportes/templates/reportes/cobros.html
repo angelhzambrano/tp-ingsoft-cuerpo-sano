@@ -38,9 +38,9 @@
                     {{ form.miembro }}
                 </div>
 
-                <div class="form-control md:col-span-4 md:flex-row gap-2 justify-end">
-                    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
-                    <a href="{% url 'reportes:cobros' %}" class="btn btn-ghost btn-sm">Limpiar</a>
+                <div class="form-control md:col-span-4 md:flex md:flex-row gap-2 justify-end">
+                    <button type="submit" class="btn-primary px-4 py-2 rounded-md font-semibold text-white hover:opacity-90 transition">Filtrar</button>
+                    <a href="{% url 'reportes:cobros' %}" class="btn-ghost px-4 py-2 rounded-md font-semibold hover:opacity-90 transition">Limpiar</a>
                 </div>
             </form>
         </div>
