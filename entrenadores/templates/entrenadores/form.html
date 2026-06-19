@@ -8,7 +8,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="post" class="space-y-4">
+            <form method="post" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
 
                 <div class="form-control">
@@ -72,11 +72,55 @@
                 </div>
 
                 <div class="form-control">
+                    <label class="label">
+                        <span class="label-text font-semibold">📄 Certificado PDF *</span>
+                        <span class="label-text-alt text-gray">Acreditación profesional</span>
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition cursor-pointer" onclick="document.getElementById('id_certificado').click()">
+                        {% if form.instance.certificado %}
+                            <div class="text-3xl mb-2">✅</div>
+                            <p class="font-semibold text-dark">Certificado cargado</p>
+                            <p class="text-sm text-gray">{{ form.instance.certificado.name|truncatechars:40 }}</p>
+                            <p class="text-xs text-gray mt-2">Click para cambiar</p>
+                        {% else %}
+                            <div class="text-4xl mb-2">📋</div>
+                            <p class="font-semibold text-dark">Arrastra PDF aquí o click</p>
+                            <p class="text-sm text-gray mt-1">Solo archivos PDF</p>
+                        {% endif %}
+                    </div>
+                    <input type="file" id="id_certificado" accept=".pdf" style="display:none;" onchange="showFileName(this)">
+                    {% if form.certificado.errors %}
+                    <div class="alert alert-error mt-3">
+                        <span>{{ form.certificado.errors.0 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-control">
                     <label class="label cursor-pointer">
                         {{ form.activo }}
                         <span class="label-text ml-2">Entrenador Activo</span>
                     </label>
                 </div>
+
+                <script>
+                function showFileName(input) {
+                    const file = input.files[0];
+                    if (file && file.type === 'application/pdf') {
+                        const container = input.parentElement.querySelector('[onclick]');
+                        container.innerHTML = `
+                            <div class="text-3xl mb-2">✅</div>
+                            <p class="font-semibold text-dark">Certificado seleccionado</p>
+                            <p class="text-sm text-gray">${file.name}</p>
+                            <p class="text-xs text-gray mt-2">Click para cambiar</p>
+                        `;
+                        container.style.borderColor = '#10B981';
+                    } else if (file) {
+                        alert('Por favor selecciona un archivo PDF');
+                        input.value = '';
+                    }
+                }
+                </script>
 
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger">
