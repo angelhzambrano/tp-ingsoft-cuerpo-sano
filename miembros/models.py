@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from cloudinary.models import CloudinaryField
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 
 
 class Miembro(models.Model):
@@ -17,14 +17,23 @@ class Miembro(models.Model):
     dni = models.CharField(max_length=15, unique=True)
     email = models.EmailField(blank=True)
     telefono = models.CharField(max_length=20, blank=True)
-    foto = CloudinaryField('foto', folder='miembros', blank=True, null=True)
+    foto = models.ImageField(
+        upload_to='miembros/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif'])],
+        help_text='Máximo 5MB. Formatos: JPG, PNG, GIF'
+    )
     tipo_miembro = models.CharField(max_length=20, choices=TIPO_CHOICES, default='REGULAR')
     activo = models.BooleanField(default=True)
     fecha_alta = models.DateField(auto_now_add=True)
 
     def clean(self):
-        if self.foto and self.foto.size > 5 * 1024 * 1024:
-            raise ValidationError('La foto no debe exceder 5MB')
+        if self.foto:
+            # Validar tamaño máximo
+            max_size = 5 * 1024 * 1024  # 5MB
+            if self.foto.size > max_size:
+                raise ValidationError(f'La foto no debe exceder 5MB (actual: {self.foto.size / 1024 / 1024:.1f}MB)')
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
@@ -33,7 +42,7 @@ class Miembro(models.Model):
 class Carnet(models.Model):
     miembro = models.OneToOneField(Miembro, on_delete=models.CASCADE, related_name='carnet')
     numero_carnet = models.CharField(max_length=10, unique=True)
-    codigo_barras_imagen = CloudinaryField('barcode', folder='carnets')
+    codigo_barras_imagen = models.ImageField(upload_to='carnets/', help_text='Código de barras generado automáticamente')
     fecha_emision = models.DateField(auto_now_add=True)
 
     def __str__(self):
