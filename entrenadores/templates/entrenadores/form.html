@@ -106,7 +106,13 @@
                 <script>
                 function showFileName(input) {
                     const file = input.files[0];
-                    if (file && file.type === 'application/pdf') {
+                    if (file) {
+                        // Validar que sea PDF por extensión (más confiable que MIME type)
+                        if (!file.name.toLowerCase().endsWith('.pdf')) {
+                            alert('Por favor selecciona un archivo PDF');
+                            input.value = '';
+                            return;
+                        }
                         const container = input.parentElement.querySelector('[onclick]');
                         container.innerHTML = `
                             <div class="text-3xl mb-2">✅</div>
@@ -115,9 +121,6 @@
                             <p class="text-xs text-gray mt-2">Click para cambiar</p>
                         `;
                         container.style.borderColor = '#10B981';
-                    } else if (file) {
-                        alert('Por favor selecciona un archivo PDF');
-                        input.value = '';
                     }
                 }
                 </script>

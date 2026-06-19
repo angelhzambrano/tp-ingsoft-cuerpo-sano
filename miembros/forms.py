@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Miembro
 
 
@@ -16,3 +17,12 @@ class MiembroForm(forms.ModelForm):
             'tipo_miembro': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'activo': forms.CheckboxInput(attrs={'class': 'checkbox'}),
         }
+
+    def clean_dni(self):
+        dni = self.cleaned_data.get('dni')
+        if dni:
+            # Verificar que el DNI sea único, pero permitir el mismo DNI en edición
+            existing = Miembro.objects.filter(dni=dni).exclude(pk=self.instance.pk)
+            if existing.exists():
+                raise ValidationError('Este DNI ya existe en el sistema.')
+        return dni
