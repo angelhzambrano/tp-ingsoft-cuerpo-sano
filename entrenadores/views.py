@@ -3,10 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.db import transaction
 from django.http import HttpResponseForbidden
+from django.contrib import messages
 from datetime import date
+import logging
 from .models import Entrenador, AsistenciaEntrenador
 from .forms import EntrenadorForm, AsistenciaEntrenadorForm
 from actividades.models import HorarioClase
+
+logger = logging.getLogger(__name__)
 
 
 def _puede_ver_entrenadores(user):
@@ -36,9 +40,27 @@ def crear_entrenador(request):
 
     if request.method == 'POST':
         form = EntrenadorForm(request.POST, request.FILES)
+
+        # Debug: loguear archivos recibidos
+        if 'certificado' in request.FILES:
+            file = request.FILES['certificado']
+            logger.info(f"PDF cargado: {file.name} ({file.size} bytes)")
+        else:
+            logger.warning("No se recibió certificado PDF")
+
         if form.is_valid():
-            entrenador = form.save()
-            return redirect('entrenadores:detalle', pk=entrenador.pk)
+            try:
+                entrenador = form.save()
+                messages.success(request, f'Entrenador {entrenador} creado exitosamente')
+                return redirect('entrenadores:detalle', pk=entrenador.pk)
+            except Exception as e:
+                logger.error(f"Error al guardar entrenador: {type(e).__name__}: {e}")
+                messages.error(request, f'Error al crear entrenador: {str(e)}')
+        else:
+            # Loguear errores del formulario
+            logger.warning(f"Errores del formulario: {form.errors}")
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field}: {', '.join(errors)}")
     else:
         form = EntrenadorForm()
     return render(request, 'entrenadores/form.html', {'form': form, 'title': 'Crear Entrenador'})
