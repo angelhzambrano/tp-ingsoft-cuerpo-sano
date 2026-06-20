@@ -14,7 +14,7 @@ class Entrenador(models.Model):
         upload_to='certificados/entrenadores/',
         validators=[FileExtensionValidator(allowed_extensions=['pdf'])],
         help_text='PDF de certificación que acredita al entrenador',
-        blank=False,
+        blank=True,  # TEMPORAL: Hacer opcional para testear
         null=True
     )
     activo = models.BooleanField(default=True)
