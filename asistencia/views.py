@@ -48,14 +48,9 @@ def registrar_por_barcode(request):
         if not miembro.activo:
             return JsonResponse({'success': False, 'error': f'Miembro {miembro} inactivo'})
 
-        # Validar que tenga membresía activa
-        membresia = Membresia.objects.filter(
-            miembro=miembro,
-            estado='ACTIVA'
-        ).first()
-
-        if not membresia:
-            return JsonResponse({'success': False, 'error': f'Membresía vencida o inexistente para {miembro}'})
+        # Validar que tenga tipo de membresía activa asignada
+        if not miembro.tipo_membresia_activa:
+            return JsonResponse({'success': False, 'error': f'Miembro {miembro} sin tipo de membresía asignado'})
 
         # Crear asistencia
         with transaction.atomic():
@@ -112,13 +107,9 @@ def registro_manual(request):
         miembro = get_object_or_404(Miembro, pk=miembro_id)
 
         # Validar membresía activa
-        membresia = Membresia.objects.filter(
-            miembro=miembro,
-            estado='ACTIVA'
-        ).first()
-
-        if not membresia:
-            messages.error(request, f'Membresía vencida o inexistente para {miembro}')
+        # Validar que tenga tipo de membresía activa asignada
+        if not miembro.tipo_membresia_activa:
+            messages.error(request, f'Miembro {miembro} sin tipo de membresía asignado')
             return render(request, 'asistencia/registro_manual.html')
 
         # Crear asistencia
