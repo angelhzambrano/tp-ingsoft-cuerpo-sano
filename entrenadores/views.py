@@ -1,14 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from datetime import date
 import logging
-from .models import Entrenador, AsistenciaEntrenador
-from .forms import EntrenadorForm, AsistenciaEntrenadorForm
-from actividades.models import HorarioClase
+from .models import Entrenador
+from .forms import EntrenadorForm
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +66,8 @@ def crear_entrenador(request):
 @login_required
 def detalle_entrenador(request, pk):
     entrenador = get_object_or_404(Entrenador, pk=pk)
-    asistencias = entrenador.asistencias.all().order_by('-fecha')
     return render(request, 'entrenadores/detalle.html', {
-        'entrenador': entrenador,
-        'asistencias': asistencias
+        'entrenador': entrenador
     })
 
 
@@ -98,77 +93,6 @@ def editar_entrenador(request, pk):
 @require_http_methods(["GET"])
 def print_entrenador(request, pk):
     entrenador = get_object_or_404(Entrenador, pk=pk)
-    asistencias = entrenador.asistencias.all().order_by('-fecha')
-    stats = {
-        'total': asistencias.count(),
-        'presentes': asistencias.filter(tipo='PRESENTE').count(),
-        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
-        'justificadas': asistencias.filter(justificada=True).count(),
-    }
     return render(request, 'entrenadores/print.html', {
-        'entrenador': entrenador,
-        'asistencias': asistencias,
-        'stats': stats
-    })
-
-
-@login_required
-@require_http_methods(["GET", "POST"])
-def registro_asistencia_entrenador(request):
-    if request.method == 'POST':
-        form = AsistenciaEntrenadorForm(request.POST)
-        if form.is_valid():
-            with transaction.atomic():
-                form.save()
-            return redirect('entrenadores:lista')
-    else:
-        form = AsistenciaEntrenadorForm()
-    return render(request, 'entrenadores/form_asistencia.html', {
-        'form': form,
-        'title': 'Registrar Asistencia de Entrenador'
-    })
-
-
-@login_required
-def mi_asistencia_entrenador(request):
-    """Vista personal de asistencia del entrenador logueado"""
-    try:
-        entrenador = Entrenador.objects.get(email=request.user.email)
-    except Entrenador.DoesNotExist:
-        return render(request, 'entrenadores/sin_asignacion.html', {
-            'mensaje': 'No estás registrado como entrenador en el sistema'
-        })
-
-    asistencias = entrenador.asistencias.all().order_by('-fecha')
-
-    stats = {
-        'total': asistencias.count(),
-        'presentes': asistencias.filter(tipo='PRESENTE').count(),
-        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
-        'justificadas': asistencias.filter(justificada=True).count(),
-    }
-
-    return render(request, 'entrenadores/mi_asistencia.html', {
-        'entrenador': entrenador,
-        'asistencias': asistencias,
-        'stats': stats
-    })
-
-
-@login_required
-def historial_asistencias_entrenador(request, pk):
-    entrenador = get_object_or_404(Entrenador, pk=pk)
-    asistencias = entrenador.asistencias.all().order_by('-fecha')
-
-    stats = {
-        'total': asistencias.count(),
-        'presentes': asistencias.filter(tipo='PRESENTE').count(),
-        'ausentes': asistencias.filter(tipo='AUSENTE').count(),
-        'justificadas': asistencias.filter(justificada=True).count(),
-    }
-
-    return render(request, 'entrenadores/historial_asistencias.html', {
-        'entrenador': entrenador,
-        'asistencias': asistencias,
-        'stats': stats
+        'entrenador': entrenador
     })
