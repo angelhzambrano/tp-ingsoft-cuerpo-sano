@@ -7,22 +7,13 @@ class CobroForm(forms.ModelForm):
     miembro = forms.ModelChoiceField(
         queryset=Miembro.objects.filter(activo=True),
         widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
-        help_text='Selecciona el miembro para cobrar'
-    )
-
-    monto_base = forms.DecimalField(
-        disabled=True,
-        widget=forms.NumberInput(attrs={
-            'class': 'input input-bordered w-full',
-            'readonly': True
-        }),
-        help_text='Se calcula automáticamente del tipo de membresía del miembro'
+        help_text='Selecciona el miembro para cobrar su membresía activa'
     )
 
     class Meta:
         model = Cobro
-        fields = ['miembro', 'monto_base', 'forma_pago', 'observaciones']
-        exclude = ['membresia']
+        fields = ['miembro', 'forma_pago', 'observaciones']
+        exclude = ['membresia', 'monto_base', 'descuento_porcentaje', 'monto_final']
         widgets = {
             'forma_pago': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'observaciones': forms.Textarea(attrs={

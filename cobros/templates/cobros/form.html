@@ -26,19 +26,19 @@
                     </label>
                 </div>
 
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Monto Base *</span>
-                    </label>
-                    {{ form.monto_base }}
-                    {% if form.monto_base.errors %}
-                        <label class="label">
-                            <span class="label-text-alt text-error">{{ form.monto_base.errors.0 }}</span>
-                        </label>
-                    {% endif %}
-                    <label class="label">
-                        <span class="label-text-alt text-gray-500">Se aplicará descuento automático según tipo de miembro</span>
-                    </label>
+                <!-- Información de membresía (calculada dinámicamente) -->
+                <div id="info-membresia" class="form-control hidden">
+                    <div class="alert alert-info">
+                        <div>
+                            <h4 class="font-semibold mb-2">💳 A Cobrar:</h4>
+                            <div id="detalle-membresia" class="space-y-1">
+                                <p><span class="font-medium">Tipo:</span> <span id="tipo-membresia">-</span></p>
+                                <p><span class="font-medium">Monto Base:</span> $<span id="monto-base">0.00</span></p>
+                                <p><span class="font-medium">Descuento:</span> <span id="descuento-pct">0</span>%</p>
+                                <p class="text-lg font-bold border-t pt-2"><span class="font-medium">Total:</span> $<span id="monto-final">0.00</span></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-control">
@@ -81,4 +81,28 @@
         </div>
     </div>
 </div>
+
+<script>
+// Datos de miembros y sus membresías (inyectado desde la vista)
+const miembrosData = {{ miembros_json|safe }};
+
+document.getElementById('id_miembro').addEventListener('change', function() {
+    const miembroId = this.value;
+    if (!miembroId) {
+        document.getElementById('info-membresia').classList.add('hidden');
+        return;
+    }
+
+    const miembro = miembrosData.find(m => m.id === parseInt(miembroId));
+    if (!miembro) return;
+
+    // Mostrar información
+    document.getElementById('tipo-membresia').textContent = miembro.tipo_membresia;
+    document.getElementById('monto-base').textContent = miembro.monto_base;
+    document.getElementById('descuento-pct').textContent = miembro.descuento_pct;
+    document.getElementById('monto-final').textContent = miembro.monto_final;
+
+    document.getElementById('info-membresia').classList.remove('hidden');
+});
+</script>
 {% endblock %}

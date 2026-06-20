@@ -1,4 +1,5 @@
 from decimal import Decimal
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -7,6 +8,7 @@ from django.db import transaction
 from .models import Cobro, Comprobante
 from .forms import CobroForm
 from membresias.models import Membresia
+from miembros.models import Miembro
 
 
 def require_admin_or_recepcion(view_func):
@@ -112,7 +114,28 @@ def registrar_cobro(request):
     else:
         form = CobroForm()
 
-    context = {'form': form}
+    # Preparar datos de miembros con sus membresías para el frontend
+    miembros = Miembro.objects.filter(activo=True).select_related('tipo_membresia_activa')
+    miembros_data = []
+    for miembro in miembros:
+        if miembro.tipo_membresia_activa:
+            monto_base = float(miembro.tipo_membresia_activa.precio)
+            descuento_pct = float(calcular_descuento(miembro))
+            monto_final = monto_base * (1 - descuento_pct / 100)
+
+            miembros_data.append({
+                'id': miembro.id,
+                'nombre': str(miembro),
+                'tipo_membresia': miembro.tipo_membresia_activa.nombre,
+                'monto_base': f'{monto_base:.2f}',
+                'descuento_pct': f'{descuento_pct:.0f}',
+                'monto_final': f'{monto_final:.2f}',
+            })
+
+    context = {
+        'form': form,
+        'miembros_json': json.dumps(miembros_data)
+    }
     return render(request, 'cobros/form.html', context)
 
 
