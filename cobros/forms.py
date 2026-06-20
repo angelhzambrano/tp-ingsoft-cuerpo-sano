@@ -6,18 +6,23 @@ from membresias.models import Membresia
 class CobroForm(forms.ModelForm):
     membresia = forms.ModelChoiceField(
         queryset=Membresia.objects.filter(estado='ACTIVA'),
-        widget=forms.Select(attrs={'class': 'select select-bordered w-full'})
+        widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
+        help_text='Se cobrará automáticamente el precio de la membresía seleccionada'
+    )
+
+    monto_base = forms.DecimalField(
+        disabled=True,
+        widget=forms.NumberInput(attrs={
+            'class': 'input input-bordered w-full',
+            'readonly': True
+        }),
+        help_text='Se calcula automáticamente del precio de la membresía'
     )
 
     class Meta:
         model = Cobro
         fields = ['membresia', 'monto_base', 'forma_pago', 'observaciones']
         widgets = {
-            'monto_base': forms.NumberInput(attrs={
-                'class': 'input input-bordered w-full',
-                'step': '0.01',
-                'min': '0.01'
-            }),
             'forma_pago': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'observaciones': forms.Textarea(attrs={
                 'class': 'textarea textarea-bordered w-full',
@@ -31,9 +36,3 @@ class CobroForm(forms.ModelForm):
         self.fields['membresia'].queryset = Membresia.objects.filter(
             estado='ACTIVA'
         ).select_related('miembro', 'tipo')
-
-    def clean_monto_base(self):
-        monto = self.cleaned_data.get('monto_base')
-        if monto and monto <= 0:
-            raise forms.ValidationError('El monto debe ser mayor a 0')
-        return monto

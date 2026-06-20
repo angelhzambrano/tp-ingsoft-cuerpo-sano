@@ -1,12 +1,20 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Miembro
+from membresias.models import Membresia
 
 
 class MiembroForm(forms.ModelForm):
+    membresia_activa = forms.ModelChoiceField(
+        queryset=Membresia.objects.filter(estado='ACTIVA'),
+        required=False,
+        widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
+        help_text='Membresía activa asignada al miembro'
+    )
+
     class Meta:
         model = Miembro
-        fields = ['nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'activo']
+        fields = ['nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'membresia_activa', 'activo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'apellido': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),

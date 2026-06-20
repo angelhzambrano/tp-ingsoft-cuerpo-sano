@@ -27,6 +27,13 @@ class Miembro(models.Model):
     tipo_miembro = models.CharField(max_length=20, choices=TIPO_CHOICES, default='REGULAR')
     activo = models.BooleanField(default=True)
     fecha_alta = models.DateField(auto_now_add=True)
+    membresia_activa = models.ForeignKey(
+        'membresias.Membresia',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='miembro_activo'
+    )
 
     def clean(self):
         if self.foto:

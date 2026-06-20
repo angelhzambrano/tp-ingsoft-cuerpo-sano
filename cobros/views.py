@@ -58,7 +58,8 @@ def registrar_cobro(request):
         if form.is_valid():
             with transaction.atomic():
                 membresia = form.cleaned_data['membresia']
-                monto_base = form.cleaned_data['monto_base']
+                # Usar automáticamente el precio de la membresía
+                monto_base = membresia.tipo.precio
 
                 # Calcular descuento
                 descuento_porcentaje = calcular_descuento(membresia.miembro)
