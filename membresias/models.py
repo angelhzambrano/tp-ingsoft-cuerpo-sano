@@ -41,7 +41,7 @@ class Membresia(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.tipo.nombre}"
+        return f"{self.tipo.nombre} - {self.miembro.nombre}"
 
     class Meta:
         verbose_name_plural = 'Membresías'

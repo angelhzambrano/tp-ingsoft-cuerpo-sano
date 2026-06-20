@@ -28,17 +28,10 @@ class MiembroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Si estamos editando un miembro existente, mostrar solo sus membresías
-        if self.instance and self.instance.pk:
-            self.fields['membresia_activa'].queryset = Membresia.objects.filter(
-                miembro=self.instance,
-                estado='ACTIVA'
-            ).select_related('tipo')
-        else:
-            # Si es un nuevo miembro, mostrar todas las membresías disponibles
-            self.fields['membresia_activa'].queryset = Membresia.objects.filter(
-                estado='ACTIVA'
-            ).select_related('miembro', 'tipo')
+        # Mostrar todas las membresías activas (permite cambiar de membresía)
+        self.fields['membresia_activa'].queryset = Membresia.objects.filter(
+            estado='ACTIVA'
+        ).select_related('miembro', 'tipo').order_by('-fecha_inicio')
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
