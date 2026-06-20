@@ -6,7 +6,7 @@ from membresias.models import Membresia
 
 class MiembroForm(forms.ModelForm):
     membresia_activa = forms.ModelChoiceField(
-        queryset=Membresia.objects.filter(estado='ACTIVA'),
+        queryset=Membresia.objects.none(),
         required=True,
         widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
         help_text='Membresía activa asignada al miembro - requerida para registrar cobros'
@@ -25,6 +25,20 @@ class MiembroForm(forms.ModelForm):
             'tipo_miembro': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'activo': forms.CheckboxInput(attrs={'class': 'checkbox'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Si estamos editando un miembro existente, mostrar solo sus membresías
+        if self.instance and self.instance.pk:
+            self.fields['membresia_activa'].queryset = Membresia.objects.filter(
+                miembro=self.instance,
+                estado='ACTIVA'
+            ).select_related('tipo')
+        else:
+            # Si es un nuevo miembro, mostrar todas las membresías disponibles
+            self.fields['membresia_activa'].queryset = Membresia.objects.filter(
+                estado='ACTIVA'
+            ).select_related('miembro', 'tipo')
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
