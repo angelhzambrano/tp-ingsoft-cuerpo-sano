@@ -26,5 +26,6 @@ urlpatterns = [
     path('historial/', include('historial.urls', namespace='historial')),
 ]
 
-# Servir archivos media (tanto en desarrollo como en producción)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Servir archivos media solo en desarrollo (en producción los sirve Supabase)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
