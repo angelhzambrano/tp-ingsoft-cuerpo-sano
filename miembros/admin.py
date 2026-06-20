@@ -4,11 +4,11 @@ from .models import Miembro, Carnet
 
 @admin.register(Miembro)
 class MiembroAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'apellido', 'dni', 'tipo_miembro', 'membresia_activa', 'activo', 'fecha_alta')
-    list_filter = ('tipo_miembro', 'activo', 'fecha_alta')
+    list_display = ('nombre', 'apellido', 'dni', 'tipo_miembro', 'tipo_membresia_activa', 'activo', 'fecha_alta')
+    list_filter = ('tipo_miembro', 'tipo_membresia_activa', 'activo', 'fecha_alta')
     search_fields = ('nombre', 'apellido', 'dni', 'email')
     readonly_fields = ('fecha_alta',)
-    fields = ('nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'membresia_activa', 'activo', 'fecha_alta')
+    fields = ('nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'tipo_membresia_activa', 'activo', 'fecha_alta')
 
 
 @admin.register(Carnet)

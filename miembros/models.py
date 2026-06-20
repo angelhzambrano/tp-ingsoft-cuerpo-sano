@@ -27,11 +27,11 @@ class Miembro(models.Model):
     tipo_miembro = models.CharField(max_length=20, choices=TIPO_CHOICES, default='REGULAR')
     activo = models.BooleanField(default=True)
     fecha_alta = models.DateField(auto_now_add=True)
-    membresia_activa = models.ForeignKey(
-        'membresias.Membresia',
+    tipo_membresia_activa = models.ForeignKey(
+        'membresias.TipoMembresia',
         on_delete=models.PROTECT,
-        related_name='miembro_activo',
-        help_text='Membresía activa del miembro - requerida para registrar cobros'
+        related_name='miembros_activos',
+        help_text='Tipo de membresía activa - requerida para registrar cobros'
     )
 
     def clean(self):

@@ -1,13 +1,13 @@
 from django import forms
 from .models import Cobro
-from membresias.models import Membresia
+from miembros.models import Miembro
 
 
 class CobroForm(forms.ModelForm):
-    membresia = forms.ModelChoiceField(
-        queryset=Membresia.objects.filter(estado='ACTIVA'),
+    miembro = forms.ModelChoiceField(
+        queryset=Miembro.objects.filter(activo=True),
         widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
-        help_text='Se cobrará automáticamente el precio de la membresía seleccionada'
+        help_text='Selecciona el miembro para cobrar'
     )
 
     monto_base = forms.DecimalField(
@@ -16,12 +16,13 @@ class CobroForm(forms.ModelForm):
             'class': 'input input-bordered w-full',
             'readonly': True
         }),
-        help_text='Se calcula automáticamente del precio de la membresía'
+        help_text='Se calcula automáticamente del tipo de membresía del miembro'
     )
 
     class Meta:
         model = Cobro
-        fields = ['membresia', 'monto_base', 'forma_pago', 'observaciones']
+        fields = ['miembro', 'monto_base', 'forma_pago', 'observaciones']
+        exclude = ['membresia']
         widgets = {
             'forma_pago': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'observaciones': forms.Textarea(attrs={
@@ -32,7 +33,7 @@ class CobroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Solo mostrar membresías activas
-        self.fields['membresia'].queryset = Membresia.objects.filter(
-            estado='ACTIVA'
-        ).select_related('miembro', 'tipo')
+        # Mostrar solo miembros activos
+        self.fields['miembro'].queryset = Miembro.objects.filter(
+            activo=True
+        ).select_related('tipo_membresia_activa')

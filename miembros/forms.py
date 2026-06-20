@@ -1,20 +1,20 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Miembro
-from membresias.models import Membresia
+from membresias.models import TipoMembresia
 
 
 class MiembroForm(forms.ModelForm):
-    membresia_activa = forms.ModelChoiceField(
-        queryset=Membresia.objects.none(),
+    tipo_membresia_activa = forms.ModelChoiceField(
+        queryset=TipoMembresia.objects.all(),
         required=True,
         widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
-        help_text='Membresía activa asignada al miembro - requerida para registrar cobros'
+        help_text='Tipo de membresía activa - requerida para registrar cobros'
     )
 
     class Meta:
         model = Miembro
-        fields = ['nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'membresia_activa', 'activo']
+        fields = ['nombre', 'apellido', 'dni', 'email', 'telefono', 'foto', 'tipo_miembro', 'tipo_membresia_activa', 'activo']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'apellido': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
@@ -25,13 +25,6 @@ class MiembroForm(forms.ModelForm):
             'tipo_miembro': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'activo': forms.CheckboxInput(attrs={'class': 'checkbox'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Mostrar todas las membresías activas (permite cambiar de membresía)
-        self.fields['membresia_activa'].queryset = Membresia.objects.filter(
-            estado='ACTIVA'
-        ).select_related('miembro', 'tipo').order_by('-fecha_inicio')
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')

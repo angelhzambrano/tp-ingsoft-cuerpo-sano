@@ -57,19 +57,32 @@ def registrar_cobro(request):
         form = CobroForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
-                membresia = form.cleaned_data['membresia']
-                miembro = membresia.miembro
+                miembro = form.cleaned_data['miembro']
 
-                # Validar que miembro tenga membresía asignada
-                if not miembro.membresia_activa:
+                # Validar que miembro tenga tipo de membresía asignada
+                if not miembro.tipo_membresia_activa:
                     messages.error(
                         request,
-                        f'El miembro {miembro} no tiene membresía asignada. Asignale una membresía antes de registrar cobros.'
+                        f'El miembro {miembro} no tiene tipo de membresía asignado. Asignale un tipo antes de registrar cobros.'
                     )
                     return redirect('cobros:registrar')
 
-                # Usar automáticamente el precio de la membresía
-                monto_base = membresia.tipo.precio
+                # Obtener la membresía activa del miembro (la más reciente)
+                membresia = Membresia.objects.filter(
+                    miembro=miembro,
+                    tipo=miembro.tipo_membresia_activa,
+                    estado='ACTIVA'
+                ).order_by('-fecha_inicio').first()
+
+                if not membresia:
+                    messages.error(
+                        request,
+                        f'El miembro {miembro} no tiene membresía activa para el tipo asignado.'
+                    )
+                    return redirect('cobros:registrar')
+
+                # Usar automáticamente el precio del tipo de membresía
+                monto_base = miembro.tipo_membresia_activa.precio
 
                 # Calcular descuento
                 descuento_porcentaje = calcular_descuento(miembro)
