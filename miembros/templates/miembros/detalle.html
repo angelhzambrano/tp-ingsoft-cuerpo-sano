@@ -90,32 +90,5 @@
         </div>
     </div>
 
-    <!-- Membresías -->
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title text-lg">Membresías</h2>
-            {% if miembro.membresias.all %}
-            <div class="space-y-2">
-                {% for membresia in miembro.membresias.all %}
-                <div class="border rounded p-3">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="font-medium">{{ membresia.tipo.nombre }}</p>
-                            <p class="text-sm text-gray-500">
-                                {{ membresia.fecha_inicio|date:'d/m/Y' }} - {{ membresia.fecha_fin|date:'d/m/Y' }}
-                            </p>
-                        </div>
-                        <span class="badge {% if membresia.estado == 'ACTIVA' %}badge-success{% elif membresia.estado == 'VENCIDA' %}badge-warning{% else %}badge-error{% endif %}">
-                            {{ membresia.get_estado_display }}
-                        </span>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <p class="text-gray-500">No tiene membresías registradas</p>
-            {% endif %}
-        </div>
-    </div>
 </div>
 {% endblock %}
