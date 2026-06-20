@@ -58,17 +58,27 @@ def registrar_cobro(request):
         if form.is_valid():
             with transaction.atomic():
                 membresia = form.cleaned_data['membresia']
+                miembro = membresia.miembro
+
+                # Validar que miembro tenga membresía asignada
+                if not miembro.membresia_activa:
+                    messages.error(
+                        request,
+                        f'El miembro {miembro} no tiene membresía asignada. Asignale una membresía antes de registrar cobros.'
+                    )
+                    return redirect('cobros:registrar')
+
                 # Usar automáticamente el precio de la membresía
                 monto_base = membresia.tipo.precio
 
                 # Calcular descuento
-                descuento_porcentaje = calcular_descuento(membresia.miembro)
+                descuento_porcentaje = calcular_descuento(miembro)
                 descuento_monto = monto_base * (descuento_porcentaje / Decimal('100'))
                 monto_final = monto_base - descuento_monto
 
                 # Crear cobro
                 cobro = Cobro(
-                    miembro=membresia.miembro,
+                    miembro=miembro,
                     membresia=membresia,
                     monto_base=monto_base,
                     descuento_porcentaje=descuento_porcentaje,

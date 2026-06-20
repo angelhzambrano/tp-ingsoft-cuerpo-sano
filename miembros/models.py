@@ -29,10 +29,9 @@ class Miembro(models.Model):
     fecha_alta = models.DateField(auto_now_add=True)
     membresia_activa = models.ForeignKey(
         'membresias.Membresia',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='miembro_activo'
+        on_delete=models.PROTECT,
+        related_name='miembro_activo',
+        help_text='Membresía activa del miembro - requerida para registrar cobros'
     )
 
     def clean(self):

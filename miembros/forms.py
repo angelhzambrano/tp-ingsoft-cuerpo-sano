@@ -7,9 +7,9 @@ from membresias.models import Membresia
 class MiembroForm(forms.ModelForm):
     membresia_activa = forms.ModelChoiceField(
         queryset=Membresia.objects.filter(estado='ACTIVA'),
-        required=False,
+        required=True,
         widget=forms.Select(attrs={'class': 'select select-bordered w-full'}),
-        help_text='Membresía activa asignada al miembro'
+        help_text='Membresía activa asignada al miembro - requerida para registrar cobros'
     )
 
     class Meta:
