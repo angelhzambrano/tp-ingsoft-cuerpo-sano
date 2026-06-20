@@ -106,7 +106,13 @@ if DEBUG:
     MEDIA_ROOT = BASE_DIR / 'media'
     MEDIA_URL = '/media/'
 else:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # En producción: solo usar Cloudinary si está configurado
+    if os.environ.get('CLOUDINARY_URL'):
+        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    else:
+        # Fallback a almacenamiento local si Cloudinary no está disponible
+        DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+        MEDIA_ROOT = BASE_DIR / 'media'
     MEDIA_URL = '/media/'
 
 # Security settings for production
