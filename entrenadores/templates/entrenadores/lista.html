@@ -19,6 +19,7 @@
                         <th>Email</th>
                         <th>Teléfono</th>
                         <th>Estado</th>
+                        <th>Certificado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -34,6 +35,13 @@
                                     <span class="badge badge-success">Activo</span>
                                 {% else %}
                                     <span class="badge badge-danger">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if entrenador.certificado %}
+                                    <span class="badge badge-info">✅ Certificado</span>
+                                {% else %}
+                                    <span class="badge badge-warning">⚠️ Sin certificado</span>
                                 {% endif %}
                             </td>
                             <td class="space-x-2">

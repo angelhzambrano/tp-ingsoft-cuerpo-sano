@@ -37,6 +37,19 @@
                             {% endif %}
                         </p>
                     </div>
+                    <div>
+                        <p class="text-gray text-sm">Certificado PDF</p>
+                        {% if entrenador.certificado %}
+                            <div class="flex items-center gap-2">
+                                <span class="badge badge-success">✅ Certificado</span>
+                                <a href="{{ entrenador.certificado.url }}" target="_blank" class="btn-ghost px-2 py-1 rounded-md text-sm hover:opacity-90">
+                                    📥 Descargar
+                                </a>
+                            </div>
+                        {% else %}
+                            <span class="badge badge-warning">⚠️ Sin certificado</span>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="card-actions justify-end mt-4">
