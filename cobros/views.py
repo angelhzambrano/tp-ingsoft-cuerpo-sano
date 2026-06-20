@@ -58,59 +58,69 @@ def registrar_cobro(request):
     if request.method == 'POST':
         form = CobroForm(request.POST)
         if form.is_valid():
-            with transaction.atomic():
-                miembro = form.cleaned_data['miembro']
+            try:
+                with transaction.atomic():
+                    miembro = form.cleaned_data['miembro']
 
-                # Validar que miembro tenga tipo de membresía asignada
-                if not miembro.tipo_membresia_activa:
-                    messages.error(
-                        request,
-                        f'El miembro {miembro} no tiene tipo de membresía asignado. Asignale un tipo antes de registrar cobros.'
+                    # Validar que miembro tenga tipo de membresía asignada
+                    if not miembro.tipo_membresia_activa:
+                        messages.error(
+                            request,
+                            f'El miembro {miembro} no tiene tipo de membresía asignado. Asignale un tipo antes de registrar cobros.'
+                        )
+                        return redirect('cobros:registrar')
+
+                    # Obtener la membresía activa del miembro (la más reciente)
+                    membresia = Membresia.objects.filter(
+                        miembro=miembro,
+                        tipo=miembro.tipo_membresia_activa,
+                        estado='ACTIVA'
+                    ).order_by('-fecha_inicio').first()
+
+                    if not membresia:
+                        messages.error(
+                            request,
+                            f'El miembro {miembro} no tiene membresía activa para el tipo asignado.'
+                        )
+                        return redirect('cobros:registrar')
+
+                    # Usar automáticamente el precio del tipo de membresía
+                    monto_base = miembro.tipo_membresia_activa.precio
+
+                    # Calcular descuento
+                    descuento_porcentaje = calcular_descuento(miembro)
+                    descuento_monto = monto_base * (descuento_porcentaje / Decimal('100'))
+                    monto_final = monto_base - descuento_monto
+
+                    # Crear cobro
+                    cobro = Cobro(
+                        miembro=miembro,
+                        membresia=membresia,
+                        monto_base=monto_base,
+                        descuento_porcentaje=descuento_porcentaje,
+                        monto_final=monto_final,
+                        forma_pago=form.cleaned_data['forma_pago'],
+                        observaciones=form.cleaned_data.get('observaciones', '')
                     )
-                    return redirect('cobros:registrar')
+                    cobro.save()
 
-                # Obtener la membresía activa del miembro (la más reciente)
-                membresia = Membresia.objects.filter(
-                    miembro=miembro,
-                    tipo=miembro.tipo_membresia_activa,
-                    estado='ACTIVA'
-                ).order_by('-fecha_inicio').first()
+                    # Crear comprobante automáticamente
+                    Comprobante.objects.create(cobro=cobro)
 
-                if not membresia:
-                    messages.error(
+                    messages.success(
                         request,
-                        f'El miembro {miembro} no tiene membresía activa para el tipo asignado.'
+                        f'Cobro registrado: ${monto_final} (descuento {descuento_porcentaje}%)'
                     )
-                    return redirect('cobros:registrar')
-
-                # Usar automáticamente el precio del tipo de membresía
-                monto_base = miembro.tipo_membresia_activa.precio
-
-                # Calcular descuento
-                descuento_porcentaje = calcular_descuento(miembro)
-                descuento_monto = monto_base * (descuento_porcentaje / Decimal('100'))
-                monto_final = monto_base - descuento_monto
-
-                # Crear cobro
-                cobro = Cobro(
-                    miembro=miembro,
-                    membresia=membresia,
-                    monto_base=monto_base,
-                    descuento_porcentaje=descuento_porcentaje,
-                    monto_final=monto_final,
-                    forma_pago=form.cleaned_data['forma_pago'],
-                    observaciones=form.cleaned_data.get('observaciones', '')
-                )
-                cobro.save()
-
-                # Crear comprobante automáticamente
-                Comprobante.objects.create(cobro=cobro)
-
-                messages.success(
-                    request,
-                    f'Cobro registrado: ${monto_final} (descuento {descuento_porcentaje}%)'
-                )
-                return redirect('cobros:comprobante', pk=cobro.pk)
+                    return redirect('cobros:comprobante', pk=cobro.pk)
+            except Exception as e:
+                messages.error(request, f'Error al registrar cobro: {str(e)}')
+                import traceback
+                traceback.print_exc()
+        else:
+            # Mostrar errores del formulario
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field}: {error}')
     else:
         form = CobroForm()
 
