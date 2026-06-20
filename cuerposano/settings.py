@@ -100,20 +100,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static'] if (BASE_DIR / 'static').exists() else 
 
 CLOUDINARY_STORAGE = {'CLOUDINARY_URL': os.environ.get('CLOUDINARY_URL', '')}
 
-# En desarrollo: usar almacenamiento local. En producción: usar Cloudinary
-if DEBUG:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_ROOT = BASE_DIR / 'media'
-    MEDIA_URL = '/media/'
-else:
-    # En producción: solo usar Cloudinary si está configurado
-    if os.environ.get('CLOUDINARY_URL'):
-        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    else:
-        # Fallback a almacenamiento local si Cloudinary no está disponible
-        DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-        MEDIA_ROOT = BASE_DIR / 'media'
-    MEDIA_URL = '/media/'
+# Usar almacenamiento local siempre (más confiable que Cloudinary sin config correcta)
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+# NOTA: Para usar Cloudinary, configurar CLOUDINARY_URL en variables de entorno
+# y cambiar DEFAULT_FILE_STORAGE a 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Security settings for production
 if not DEBUG:
