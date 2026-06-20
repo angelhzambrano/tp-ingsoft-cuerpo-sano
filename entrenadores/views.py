@@ -35,7 +35,7 @@ def crear_entrenador(request):
         return HttpResponseForbidden('No tienes permiso para crear entrenadores')
 
     if request.method == 'POST':
-        form = EntrenadorForm(request.POST)
+        form = EntrenadorForm(request.POST, request.FILES)
         if form.is_valid():
             entrenador = form.save()
             return redirect('entrenadores:detalle', pk=entrenador.pk)
@@ -59,7 +59,7 @@ def detalle_entrenador(request, pk):
 def editar_entrenador(request, pk):
     entrenador = get_object_or_404(Entrenador, pk=pk)
     if request.method == 'POST':
-        form = EntrenadorForm(request.POST, instance=entrenador)
+        form = EntrenadorForm(request.POST, request.FILES, instance=entrenador)
         if form.is_valid():
             form.save()
             return redirect('entrenadores:detalle', pk=entrenador.pk)
