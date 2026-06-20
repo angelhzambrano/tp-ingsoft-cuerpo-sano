@@ -88,7 +88,7 @@
                             <p class="text-sm text-gray mt-1">Solo archivos PDF</p>
                         {% endif %}
                     </div>
-                    <input type="file" id="id_certificado" accept=".pdf" style="display:none;" onchange="showFileName(this)">
+                    <input type="file" id="id_certificado" name="certificado" accept=".pdf" style="display:none;" onchange="showFileName(this)">
                     {% if form.certificado.errors %}
                     <div class="alert alert-error mt-3">
                         <span>{{ form.certificado.errors.0 }}</span>

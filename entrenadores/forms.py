@@ -4,12 +4,12 @@ from .models import Entrenador, AsistenciaEntrenador
 
 class EntrenadorForm(forms.ModelForm):
     certificado = forms.FileField(
-        required=False,  # TEMPORAL: Hacer opcional para testear
+        required=True,
         widget=forms.FileInput(attrs={
             'class': 'file-input file-input-bordered w-full',
             'accept': '.pdf'
         }),
-        help_text='Archivo PDF (opcional por ahora)'
+        help_text='Archivo PDF obligatorio'
     )
 
     class Meta:
