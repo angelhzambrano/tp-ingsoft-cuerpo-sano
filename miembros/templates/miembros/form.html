@@ -97,6 +97,22 @@
                 </label>
                 {% endif %}
             </div>
+
+            <!-- Membresía Activa -->
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Membresía Activa *</span>
+                </label>
+                {{ form.membresia_activa }}
+                {% if form.membresia_activa.errors %}
+                <label class="label">
+                    <span class="label-text-alt text-error">{{ form.membresia_activa.errors.0 }}</span>
+                </label>
+                {% endif %}
+                <label class="label">
+                    <span class="label-text-alt text-gray-500">{{ form.membresia_activa.help_text|safe }}</span>
+                </label>
+            </div>
         </div>
 
         <!-- Foto -->

@@ -47,6 +47,18 @@
                         <p class="text-sm text-gray-500">Fecha de alta</p>
                         <p class="font-medium">{{ miembro.fecha_alta|date:'d/m/Y' }}</p>
                     </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Membresía Activa Asignada</p>
+                        {% if miembro.membresia_activa %}
+                        <p class="font-medium">
+                            {{ miembro.membresia_activa.tipo.nombre }}
+                            <span class="badge badge-success">ACTIVA</span>
+                        </p>
+                        <p class="text-xs text-gray-500">Vence: {{ miembro.membresia_activa.fecha_fin|date:'d/m/Y' }}</p>
+                        {% else %}
+                        <p class="font-medium text-error">⚠️ Sin membresía asignada</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
