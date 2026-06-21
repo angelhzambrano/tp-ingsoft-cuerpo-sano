@@ -68,7 +68,7 @@ def registrar_cobro(request):
                             request,
                             f'El miembro {miembro} no tiene tipo de membresía asignado. Asignale un tipo antes de registrar cobros.'
                         )
-                        return redirect('cobros:registrar')
+                        return redirect('cobros:crear')
 
                     # Obtener la membresía activa del miembro (la más reciente)
                     membresia = Membresia.objects.filter(
@@ -82,7 +82,7 @@ def registrar_cobro(request):
                             request,
                             f'El miembro {miembro} no tiene membresía activa para el tipo asignado.'
                         )
-                        return redirect('cobros:registrar')
+                        return redirect('cobros:crear')
 
                     # Usar automáticamente el precio del tipo de membresía
                     monto_base = miembro.tipo_membresia_activa.precio
